@@ -9,6 +9,7 @@ from gtts import gTTS
 import matplotlib.pyplot as plt
 from PIL import Image
 import clinical_vision
+import db_manager
 
 # -------------------------------------------------------------
 # PAGE CONFIGURATION & METADATA
@@ -470,6 +471,55 @@ if st.sidebar.button("🚪 Exit to Welcome Page", use_container_width=True):
 
 st.sidebar.markdown("---")
 
+# MULTI-USER & PATIENT PROFILE MANAGER (SQLITE BACKED)
+st.sidebar.markdown("### 👤 Patient Profile (Multi-User)")
+all_patients = db_manager.get_all_patients()
+patient_options = {f"{p['name']} ({p['patient_id']})": p['patient_id'] for p in all_patients}
+
+if "active_patient_id" not in st.session_state or st.session_state.active_patient_id not in [p['patient_id'] for p in all_patients]:
+    st.session_state.active_patient_id = all_patients[0]['patient_id'] if all_patients else "P-1001"
+
+curr_idx = 0
+for i, (label, pid) in enumerate(patient_options.items()):
+    if pid == st.session_state.active_patient_id:
+        curr_idx = i
+        break
+
+selected_patient_label = st.sidebar.selectbox(
+    "Active Screening Patient:",
+    options=list(patient_options.keys()),
+    index=curr_idx,
+    key="patient_profile_selector"
+)
+st.session_state.active_patient_id = patient_options[selected_patient_label]
+active_patient_data = db_manager.get_patient(st.session_state.active_patient_id) or {}
+
+with st.sidebar.expander("➕ Register New Patient Profile"):
+    with st.form("new_patient_reg_form"):
+        p_name = st.text_input("Full Patient Name", placeholder="e.g. Ananya Rao")
+        col_pa, col_pg = st.columns(2)
+        with col_pa:
+            p_age = st.number_input("Age", min_value=1, max_value=120, value=42)
+        with col_pg:
+            p_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+        p_contact = st.text_input("Contact", placeholder="+91 98765 12345")
+        p_notes = st.text_area("Medical History Notes", placeholder="e.g. Mild hypertension")
+        
+        btn_reg = st.form_submit_button("Create Patient Profile", use_container_width=True)
+        if btn_reg:
+            if p_name.strip():
+                new_id = f"P-{1000 + len(all_patients) + 1}"
+                db_manager.add_patient(new_id, p_name.strip(), p_age, p_gender, p_contact, p_notes)
+                st.session_state.active_patient_id = new_id
+                st.sidebar.success(f"Registered {p_name} ({new_id})!")
+                st.rerun()
+            else:
+                st.sidebar.error("Name cannot be blank.")
+
+st.sidebar.caption(f"Active ID: `{st.session_state.active_patient_id}` • Age: {active_patient_data.get('age', 'N/A')} • Gender: {active_patient_data.get('gender', 'N/A')}")
+
+st.sidebar.markdown("---")
+
 menu_selection = st.sidebar.radio(
     "Select Clinical Module:",
     [
@@ -479,7 +529,8 @@ menu_selection = st.sidebar.radio(
         "❤️ Cardiovascular (Heart Disease)",
         "🩸 Diabetes Mellitus Diagnostic",
         "🫘 Chronic Kidney Disease (CKD)",
-        "📋 Consolidated Patient Health Passport"
+        "📋 Consolidated Patient Health Passport",
+        "📁 Multi-User Records & Clinical Database"
     ]
 )
 
@@ -1121,6 +1172,15 @@ elif menu_selection == "🎙️ Parkinson's Disease (Voice Screening)":
                                 "vitals": f"Acoustic Prob: {prob_pct:.1f}%, Symptoms: {sym_risk}"
                             }
 
+                            # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+                            db_manager.save_screening_record(
+                                patient_id=st.session_state.active_patient_id,
+                                disease="Parkinson's Disease",
+                                probability=prob_pct,
+                                status="Parkinson's Detected" if prob_pct >= 80 else "Healthy Voice",
+                                vitals=f"Acoustic Prob: {prob_pct:.1f}%, Symptoms: {sym_risk}"
+                            )
+
                             st.markdown("### 📊 Acoustic Phonation Results")
                             k1, k2, k3 = st.columns(3)
                             k1.metric("Parkinson's Probability", f"{prob_pct:.1f}%")
@@ -1210,6 +1270,15 @@ elif menu_selection == "❤️ Cardiovascular (Heart Disease)":
             "vitals": f"BP: {trestbps} mm Hg, Chol: {chol} mg/dL, HR: {thalach} bpm"
         }
 
+        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        db_manager.save_screening_record(
+            patient_id=st.session_state.active_patient_id,
+            disease="Cardiovascular Disease",
+            probability=prob_pct,
+            status="Heart Disease Risk Detected" if prob >= 0.5 else "Low Cardiovascular Risk",
+            vitals=f"BP: {trestbps} mm Hg, Chol: {chol} mg/dL, HR: {thalach} bpm"
+        )
+
         st.markdown("### 📊 Cardiovascular Assessment")
         k1, k2, k3 = st.columns(3)
         k1.metric("Coronary Risk Probability", f"{prob_pct:.1f}%")
@@ -1270,6 +1339,15 @@ elif menu_selection == "🩸 Diabetes Mellitus Diagnostic":
             "status": "Diabetic Risk Detected" if prob >= 0.5 else "Non-Diabetic / Normal",
             "vitals": f"Glucose: {glucose} mg/dL, BMI: {bmi}, Age: {age}"
         }
+
+        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        db_manager.save_screening_record(
+            patient_id=st.session_state.active_patient_id,
+            disease="Diabetes Mellitus",
+            probability=prob_pct,
+            status="Diabetic Risk Detected" if prob >= 0.5 else "Non-Diabetic / Normal",
+            vitals=f"Glucose: {glucose} mg/dL, BMI: {bmi}, Age: {age}"
+        )
 
         st.markdown("### 📊 Metabolic Assessment")
         d1, d2, d3 = st.columns(3)
@@ -1334,6 +1412,15 @@ elif menu_selection == "🫘 Chronic Kidney Disease (CKD)":
             "status": "CKD Detected" if prob >= 0.5 else "Healthy Kidneys",
             "vitals": f"Creatinine: {sc} mg/dL, Urea: {bu} mg/dL, Albumin: {al}"
         }
+
+        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        db_manager.save_screening_record(
+            patient_id=st.session_state.active_patient_id,
+            disease="Chronic Kidney Disease",
+            probability=prob_pct,
+            status="CKD Detected" if prob >= 0.5 else "Healthy Kidneys",
+            vitals=f"Creatinine: {sc} mg/dL, Urea: {bu} mg/dL, Albumin: {al}"
+        )
 
         st.markdown("### 📊 Renal Health Assessment")
         c1, c2, c3 = st.columns(3)
@@ -1476,6 +1563,134 @@ for direct medical diagnosis by a licensed physician.
         mime="text/plain",
         use_container_width=True
     )
+
+# -------------------------------------------------------------
+# TAB 8: MULTI-USER RECORDS & CLINICAL DATABASE
+# -------------------------------------------------------------
+elif menu_selection == "📁 Multi-User Records & Clinical Database":
+    st.subheader("📁 Multi-User Clinical Database & Longitudinal Health Records")
+    st.caption("Secure, persistent patient management and multi-disease diagnostic tracking powered by SQLite.")
+
+    patients_list = db_manager.get_all_patients()
+    all_records = db_manager.get_screening_records()
+
+    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+    with m_col1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Registered Patients</div>
+            <div class="metric-value">{len(patients_list)}</div>
+            <div class="metric-desc">Multi-user active profiles</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m_col2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Screening Records</div>
+            <div class="metric-value">{len(all_records)}</div>
+            <div class="metric-desc">Lifetime diagnostic logs</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m_col3:
+        elevated_count = sum(1 for r in all_records if "Detected" in r.get("status", "") or r.get("probability", 0) >= 50)
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Elevated Risk Logs</div>
+            <div class="metric-value" style="color: #dc2626;">{elevated_count}</div>
+            <div class="metric-desc">Flagged for clinical consult</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with m_col4:
+        active_patient_name = db_manager.get_patient(st.session_state.active_patient_id).get('name', 'Active') if db_manager.get_patient(st.session_state.active_patient_id) else 'Active'
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">Active Profile</div>
+            <div class="metric-value" style="font-size: 1.25rem;">{st.session_state.active_patient_id}</div>
+            <div class="metric-desc">{active_patient_name}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    db_tab1, db_tab2, db_tab3 = st.tabs([
+        "📜 Historical Diagnostic Records",
+        "📈 Longitudinal Risk Evolution Charts",
+        "👥 Patient Directory & Registration"
+    ])
+
+    with db_tab1:
+        st.markdown("#### 📜 Diagnostic Screening History")
+        filter_col1, filter_col2 = st.columns([1.5, 1])
+        with filter_col1:
+            view_filter = st.radio(
+                "Filter records by:",
+                [f"Active Patient Only ({st.session_state.active_patient_id})", "All Registered Patients"],
+                horizontal=True
+            )
+        
+        target_pid = st.session_state.active_patient_id if "Active Patient Only" in view_filter else None
+        records_to_show = db_manager.get_screening_records(target_pid)
+
+        if records_to_show:
+            df_recs = pd.DataFrame(records_to_show)
+            df_display = df_recs[["record_id", "timestamp", "patient_id", "patient_name", "disease", "probability", "status", "vitals"]].rename(columns={
+                "record_id": "Record #",
+                "timestamp": "Date & Time",
+                "patient_id": "Patient ID",
+                "patient_name": "Patient Name",
+                "disease": "Disease Module",
+                "probability": "Risk (%)",
+                "status": "Diagnostic Outcome",
+                "vitals": "Key Clinical Vitals"
+            })
+            st.dataframe(df_display, use_container_width=True, hide_index=True)
+
+            csv_data = df_display.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Export Clinical Records to CSV",
+                data=csv_data,
+                file_name=f"Clinical_Records_{target_pid or 'All_Patients'}.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+        else:
+            st.info("ℹ️ No screening records recorded yet for this selection. Run a screening test in any disease module to automatically record clinical results here!")
+
+    with db_tab2:
+        st.markdown(f"#### 📈 Longitudinal Risk Tracking for {st.session_state.active_patient_id}")
+        p_recs = db_manager.get_screening_records(st.session_state.active_patient_id)
+        if len(p_recs) >= 2:
+            df_trend = pd.DataFrame(p_recs)
+            df_trend = df_trend.sort_values(by="record_id")
+            
+            fig_trend, ax_trend = plt.subplots(figsize=(8, 3.5), facecolor="none")
+            for dis in df_trend["disease"].unique():
+                sub = df_trend[df_trend["disease"] == dis]
+                ax_trend.plot(range(len(sub)), sub["probability"], marker='o', linewidth=2, label=dis)
+            
+            ax_trend.set_ylabel("Risk Probability (%)", fontweight="bold")
+            ax_trend.set_xlabel("Sequential Test Order", fontweight="bold")
+            ax_trend.set_ylim(0, 100)
+            ax_trend.axhline(50, color='#f59e0b', linestyle='--', alpha=0.7, label='Clinical Threshold (50%)')
+            ax_trend.legend(loc="upper right", fontsize=8)
+            ax_trend.grid(True, linestyle=':', alpha=0.6)
+            st.pyplot(fig_trend)
+        elif len(p_recs) == 1:
+            st.info(f"Only 1 screening recorded for {st.session_state.active_patient_id}. Perform additional screenings over time to view longitudinal trend charts.")
+        else:
+            st.info("No records yet for this patient.")
+
+    with db_tab3:
+        st.markdown("#### 👥 Registered Patient Profiles Directory")
+        df_pts = pd.DataFrame(patients_list)[["patient_id", "name", "age", "gender", "contact", "created_at"]].rename(columns={
+            "patient_id": "Patient ID",
+            "name": "Full Name",
+            "age": "Age",
+            "gender": "Gender",
+            "contact": "Contact Info",
+            "created_at": "Registration Date"
+        })
+        st.dataframe(df_pts, use_container_width=True, hide_index=True)
 
 # -------------------------------------------------------------
 # GLOBAL FOOTER

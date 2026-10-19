@@ -24,3 +24,6 @@ ENV/
 
 # Streamlit local credentials
 .streamlit/
+
+# Local databases
+*.db
