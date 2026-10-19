@@ -8,6 +8,7 @@ import librosa
 from gtts import gTTS
 import matplotlib.pyplot as plt
 from PIL import Image
+import clinical_vision
 
 # -------------------------------------------------------------
 # PAGE CONFIGURATION & METADATA
@@ -251,7 +252,12 @@ if "screening_results" not in st.session_state:
 # -------------------------------------------------------------
 # NAVIGATION SIDEBAR
 # -------------------------------------------------------------
-st.sidebar.image("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&auto=format&fit=crop&q=80", use_container_width=True)
+banner_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "healthcare_banner.png")
+if os.path.exists(banner_img_path):
+    st.sidebar.image(banner_img_path, use_container_width=True)
+else:
+    st.sidebar.image("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&auto=format&fit=crop&q=80", use_container_width=True)
+
 st.sidebar.title("Navigation Hub")
 menu_selection = st.sidebar.radio(
     "Select Clinical Module:",
@@ -292,6 +298,10 @@ if menu_selection == "🏠 System Overview & Vitals Dashboard":
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    if os.path.exists(banner_img_path):
+        st.image(banner_img_path, caption="Comprehensive Physiological Systems Monitoring (Heart • Voice/Neuro • Kidney • Diabetes)", use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
     st.subheader("System Architecture & Clinical Overview")
     
@@ -555,114 +565,224 @@ elif menu_selection == "🤖 AI Medical Chatbot & Image Triaging":
     # SUB-TAB 2: VISUAL DISEASE IDENTIFIER (IMAGE TRIAGING)
     # ---------------------------------------------------------
     with sub_tab2:
-        st.markdown("#### 📷 Visual Disease Identifier & Diagnostic Triaging")
-        st.write("Upload a clinical photograph, diagnostic monitor display, laboratory test report, or symptom photo. The AI analyzes visual markers and asks clinical follow-up questions to identify which of the 4 core diseases it correlates with.")
+        st.markdown("#### 📷 Prescription Reader & Medical Image Diagnostic Triaging")
+        st.write("Upload a doctor's prescription, diagnostic monitor screen, lab report, or symptom photo. The AI extracts text, understands medications and diagnoses, and identifies the corresponding disease domain.")
 
-        img_col1, img_col2 = st.columns([1, 1.2])
-        
-        target_pil_img = None
-        img_source_label = ""
+        sub_mode = st.radio(
+            "Select Analysis Category:",
+            [
+                "📄 Prescription & Clinical Report Understanding (OCR + Medical NLP)",
+                "🩺 Symptom Photo & Vital Sign Triaging (Edema, ECG, Glucometer, Tremor)"
+            ],
+            horizontal=True
+        )
 
-        with img_col1:
-            st.markdown("##### 1. Select or Upload Image")
-            img_mode = st.radio("Choose Input Method:", ["⚡ Choose from Clinical Benchmark Samples", "📁 Upload Custom Photo/Report"], horizontal=True)
+        # -------------------------------------------------------------
+        # CATEGORY 1: PRESCRIPTION UNDERSTANDING
+        # -------------------------------------------------------------
+        if "Prescription" in sub_mode:
+            p_col1, p_col2 = st.columns([1, 1.2])
 
-            if img_mode == "⚡ Choose from Clinical Benchmark Samples":
-                sample_choice = st.selectbox(
-                    "Select a diagnostic benchmark image:",
-                    [
-                        "🫘 Sample 1: Bilateral Pitting Edema (Swollen Feet - Kidney Disease)",
-                        "❤️ Sample 2: 12-Lead ECG Strip with ST Depression (Cardiovascular)",
-                        "🩸 Sample 3: Digital Glucometer Display 248 mg/dL (Diabetes)",
-                        "🎙️ Sample 4: Archimedean Spiral Handwriting Test (Parkinson's)"
-                    ]
-                )
-                if "Kidney" in sample_choice:
-                    img_path = os.path.join("datasets", "image_samples", "edema_kidney_sample.png")
-                    img_source_label = "Pedal Edema (Kidney Sign)"
-                elif "Cardiovascular" in sample_choice:
-                    img_path = os.path.join("datasets", "image_samples", "ecg_heart_sample.png")
-                    img_source_label = "ECG Strip (Heart Sign)"
-                elif "Diabetes" in sample_choice:
-                    img_path = os.path.join("datasets", "image_samples", "glucometer_diabetes_sample.png")
-                    img_source_label = "Glucometer (Diabetes Sign)"
+            presc_img = None
+            presc_filename = ""
+
+            with p_col1:
+                st.markdown("##### 1. Upload or Select Prescription")
+                rx_source = st.radio("Prescription Source:", ["⚡ Choose Pre-Loaded Clinical Prescription", "📁 Upload Prescription / Lab Document"], horizontal=True, key="rx_source_radio")
+
+                if rx_source == "⚡ Choose Pre-Loaded Clinical Prescription":
+                    rx_choice = st.selectbox(
+                        "Select a realistic doctor's prescription:",
+                        [
+                            "🩸 Diabetes Prescription (Metformin 500mg, Glimepiride, Atorvastatin)",
+                            "❤️ Cardiovascular Prescription (Telmisartan, Amlodipine, Aspirin, Metoprolol)",
+                            "🫘 Chronic Kidney Disease Prescription (Torsemide, Sodium Bicarb, Calcium Acetate)",
+                            "🎙️ Parkinson's Disease Prescription (Syndopa Levodopa/Carbidopa, Pacitane)"
+                        ]
+                    )
+                    if "Diabetes" in rx_choice:
+                        presc_path = os.path.join("datasets", "image_samples", "prescription_diabetes.png")
+                        presc_filename = "prescription_diabetes.png"
+                    elif "Cardiovascular" in rx_choice:
+                        presc_path = os.path.join("datasets", "image_samples", "prescription_heart.png")
+                        presc_filename = "prescription_heart.png"
+                    elif "Kidney" in rx_choice:
+                        presc_path = os.path.join("datasets", "image_samples", "prescription_kidney.png")
+                        presc_filename = "prescription_kidney.png"
+                    else:
+                        presc_path = os.path.join("datasets", "image_samples", "prescription_parkinsons.png")
+                        presc_filename = "prescription_parkinsons.png"
+
+                    if os.path.exists(presc_path):
+                        presc_img = Image.open(presc_path)
+
                 else:
-                    img_path = os.path.join("datasets", "image_samples", "spiral_parkinsons_sample.png")
-                    img_source_label = "Spiral Test (Parkinson's Sign)"
+                    uploaded_rx = st.file_uploader("Upload Prescription / Lab Report (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="rx_uploader")
+                    if uploaded_rx is not None:
+                        presc_img = Image.open(uploaded_rx)
+                        presc_filename = uploaded_rx.name
 
-                if os.path.exists(img_path):
-                    target_pil_img = Image.open(img_path)
-            else:
-                uploaded_img_file = st.file_uploader("Upload Medical Image (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="diag_img_uploader")
-                if uploaded_img_file is not None:
-                    target_pil_img = Image.open(uploaded_img_file)
-                    img_source_label = "Uploaded Patient Photo"
+            with p_col2:
+                st.markdown("##### 2. Prescription Extraction & Clinical AI Analysis")
+                if presc_img is not None:
+                    st.image(presc_img, caption=f"Analyzed Document: {presc_filename}", use_container_width=True)
 
-        with img_col2:
-            st.markdown("##### 2. Visual AI Inspection & Triaging")
-            if target_pil_img is not None:
-                st.image(target_pil_img, caption=f"Analyzed Image: {img_source_label}", use_container_width=True)
+                    with st.spinner("Extracting text and identifying pharmaceutical entities..."):
+                        extracted_text, method = clinical_vision.extract_text_from_image(presc_img, presc_filename)
 
-                # Visual feature extraction
-                np_img = np.array(target_pil_img.convert("RGB"))
-                mean_r = np.mean(np_img[:, :, 0])
-                mean_g = np.mean(np_img[:, :, 1])
-                mean_b = np.mean(np_img[:, :, 2])
-                brightness = np.mean(np_img)
+                    # Provide an editable text area if user wants to review or add doctor's notes
+                    st.markdown(f"**Extracted Text via {method}:**")
+                    presc_text_input = st.text_area(
+                        "Review / Edit Prescription Text:",
+                        value=extracted_text,
+                        height=140,
+                        help="You can edit or type additional notes from the prescription if handwriting is faint."
+                    )
 
-                # Heuristic visual classification based on diagnostic patterns
-                if "Glucometer" in img_source_label or (mean_b > mean_r and mean_b > 90 and brightness < 140):
-                    suspected_disease = "Diabetes Mellitus"
-                    disease_icon = "🩸"
-                    confidence = 92
-                    q1 = "Do you frequently experience excessive thirst or dry mouth?"
-                    q2 = "Do you have sudden fatigue or lethargy shortly after eating?"
-                    q3 = "Have you noticed tingling or numbness in your feet or hands?"
-                elif "ECG" in img_source_label or (mean_r > mean_b * 1.2 and mean_r > 120):
-                    suspected_disease = "Cardiovascular / Heart Disease"
-                    disease_icon = "❤️"
-                    confidence = 91
-                    q1 = "Do you feel chest pressure, tightness, or burning during exertion?"
-                    q2 = "Do you get out of breath climbing stairs or walking briskly?"
-                    q3 = "Has a doctor ever noted resting blood pressure above 130/85 mm Hg?"
-                elif "Spiral" in img_source_label or (brightness > 200 and np.std(np_img) < 65):
-                    suspected_disease = "Parkinson's Disease"
-                    disease_icon = "🎙️"
-                    confidence = 88
-                    q1 = "Does one of your hands or fingers shake slightly when resting?"
-                    q2 = "Have you noticed your handwriting becoming smaller (micrographia)?"
-                    q3 = "Do you feel your movements or walking pace have slowed down?"
+                    if presc_text_input.strip():
+                        analysis = clinical_vision.parse_and_understand_prescription(presc_text_input)
+
+                        if analysis["status"] == "success":
+                            st.markdown(f"""
+                            <div class="result-box-healthy">
+                                <h3>🎯 Identified Condition: {analysis['icon']} {analysis['disease_name']}</h3>
+                                <p><b>Clinical Match Confidence: {analysis['confidence']}%</b></p>
+                                <p>This prescription corresponds directly to the <b>{analysis['disease_name']}</b> clinical care domain.</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+
+                            st.markdown("#### 💊 Identified Medications & Mechanisms of Action:")
+                            if analysis["drug_mechanisms"]:
+                                for drug, mech in analysis["drug_mechanisms"].items():
+                                    st.markdown(f"- **{drug}:** {mech}")
+                            else:
+                                st.write("Medications detected:", ", ".join(analysis["matched_drugs"]))
+
+                            if analysis["matched_diagnoses"]:
+                                st.markdown("#### 📋 Diagnostic Markers Mentioned:")
+                                for diag in analysis["matched_diagnoses"]:
+                                    st.markdown(f"- `{diag.upper()}`")
+
+                            st.markdown("#### 🌿 Clinical & Dietary Guidance:")
+                            st.info(analysis["clinical_advice"])
+
+                            st.markdown("#### 🚀 Recommended Action:")
+                            st.success(f"To obtain precise machine-learning risk probabilities, proceed to the **{analysis['target_module']}** module in the sidebar!")
+
+                        else:
+                            st.warning("⚠️ No specific prescription medications matching our 4 core domains were detected. Please verify or type the medication names into the text box above.")
+
                 else:
-                    suspected_disease = "Chronic Kidney Disease (CKD)"
-                    disease_icon = "🫘"
-                    confidence = 89
-                    q1 = "Do you have swelling in your feet, ankles, or under the eyes?"
-                    q2 = "Has your urine become foamy, darker, or changed in frequency?"
-                    q3 = "Do you have a personal history of hypertension or high blood sugar?"
+                    st.info("👈 Please upload a prescription or choose one of the pre-loaded clinical prescriptions to start analysis.")
 
-                st.markdown(f"**Preliminary Visual Indication:** {disease_icon} **{suspected_disease}** *(Visual Match Confidence: {confidence}%)*")
-                
-                st.markdown("---")
-                st.markdown("##### 3. Diagnostic Verification Questions:")
-                st.write("Please answer the following confirmatory clinical questions:")
-                ans1 = st.checkbox(f"1. {q1}")
-                ans2 = st.checkbox(f"2. {q2}")
-                ans3 = st.checkbox(f"3. {q3}")
+        # -------------------------------------------------------------
+        # CATEGORY 2: SYMPTOM & VITAL SIGN IMAGE TRIAGING
+        # -------------------------------------------------------------
+        else:
+            img_col1, img_col2 = st.columns([1, 1.2])
+            target_pil_img = None
+            img_source_label = ""
 
-                yes_count = sum([ans1, ans2, ans3])
-                final_confidence = min(98, confidence + (yes_count * 3) - ((3 - yes_count) * 2))
+            with img_col1:
+                st.markdown("##### 1. Select or Upload Symptom Photo")
+                img_mode = st.radio("Input Method:", ["⚡ Choose from Clinical Benchmark Samples", "📁 Upload Custom Symptom Photo/Report"], horizontal=True, key="symptom_img_mode")
 
-                st.markdown(f"""
-                <div class="result-box-warning">
-                    <h3>🎯 Primary Disease Identified: {disease_icon} {suspected_disease}</h3>
-                    <p><b>Diagnostic Match Confidence: {final_confidence}%</b></p>
-                    <p>Visual biomarkers combined with your symptom responses strongly correlate with <b>{suspected_disease}</b>.</p>
-                    <p><b>Next Step:</b> Run the full specialized Machine Learning model for this condition to obtain precise numerical risk probabilities.</p>
-                </div>
-                """, unsafe_allow_html=True)
+                if img_mode == "⚡ Choose from Clinical Benchmark Samples":
+                    sample_choice = st.selectbox(
+                        "Select a diagnostic symptom image:",
+                        [
+                            "🫘 Sample 1: Bilateral Pitting Edema (Swollen Feet - Kidney Disease)",
+                            "❤️ Sample 2: 12-Lead ECG Strip with ST Depression (Cardiovascular)",
+                            "🩸 Sample 3: Digital Glucometer Display 248 mg/dL (Diabetes)",
+                            "🎙️ Sample 4: Archimedean Spiral Handwriting Test (Parkinson's)"
+                        ]
+                    )
+                    if "Kidney" in sample_choice:
+                        img_path = os.path.join("datasets", "image_samples", "edema_kidney_sample.png")
+                        img_source_label = "Pedal Edema (Kidney Sign)"
+                    elif "Cardiovascular" in sample_choice:
+                        img_path = os.path.join("datasets", "image_samples", "ecg_heart_sample.png")
+                        img_source_label = "ECG Strip (Heart Sign)"
+                    elif "Diabetes" in sample_choice:
+                        img_path = os.path.join("datasets", "image_samples", "glucometer_diabetes_sample.png")
+                        img_source_label = "Glucometer (Diabetes Sign)"
+                    else:
+                        img_path = os.path.join("datasets", "image_samples", "spiral_parkinsons_sample.png")
+                        img_source_label = "Spiral Test (Parkinson's Sign)"
 
-            else:
-                st.info("👈 Please select a clinical benchmark image or upload an image to begin visual disease identification.")
+                    if os.path.exists(img_path):
+                        target_pil_img = Image.open(img_path)
+                else:
+                    uploaded_img_file = st.file_uploader("Upload Medical Image (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="diag_img_uploader")
+                    if uploaded_img_file is not None:
+                        target_pil_img = Image.open(uploaded_img_file)
+                        img_source_label = "Uploaded Patient Photo"
+
+            with img_col2:
+                st.markdown("##### 2. Visual AI Inspection & Triaging")
+                if target_pil_img is not None:
+                    st.image(target_pil_img, caption=f"Analyzed Image: {img_source_label}", use_container_width=True)
+
+                    # Visual feature extraction
+                    np_img = np.array(target_pil_img.convert("RGB"))
+                    mean_r = np.mean(np_img[:, :, 0])
+                    mean_g = np.mean(np_img[:, :, 1])
+                    mean_b = np.mean(np_img[:, :, 2])
+                    brightness = np.mean(np_img)
+
+                    # Visual classification based on diagnostic patterns
+                    if "Glucometer" in img_source_label or (mean_b > mean_r and mean_b > 90 and brightness < 140):
+                        suspected_disease = "Diabetes Mellitus"
+                        disease_icon = "🩸"
+                        confidence = 92
+                        q1 = "Do you frequently experience excessive thirst or dry mouth?"
+                        q2 = "Do you have sudden fatigue or lethargy shortly after eating?"
+                        q3 = "Have you noticed tingling or numbness in your feet or hands?"
+                    elif "ECG" in img_source_label or (mean_r > mean_b * 1.2 and mean_r > 120):
+                        suspected_disease = "Cardiovascular / Heart Disease"
+                        disease_icon = "❤️"
+                        confidence = 91
+                        q1 = "Do you feel chest pressure, tightness, or burning during exertion?"
+                        q2 = "Do you get out of breath climbing stairs or walking briskly?"
+                        q3 = "Has a doctor ever noted resting blood pressure above 130/85 mm Hg?"
+                    elif "Spiral" in img_source_label or (brightness > 200 and np.std(np_img) < 65):
+                        suspected_disease = "Parkinson's Disease"
+                        disease_icon = "🎙️"
+                        confidence = 88
+                        q1 = "Does one of your hands or fingers shake slightly when resting?"
+                        q2 = "Have you noticed your handwriting becoming smaller (micrographia)?"
+                        q3 = "Do you feel your movements or walking pace have slowed down?"
+                    else:
+                        suspected_disease = "Chronic Kidney Disease (CKD)"
+                        disease_icon = "🫘"
+                        confidence = 89
+                        q1 = "Do you have swelling in your feet, ankles, or under the eyes?"
+                        q2 = "Has your urine become foamy, darker, or changed in frequency?"
+                        q3 = "Do you have a personal history of hypertension or high blood sugar?"
+
+                    st.markdown(f"**Preliminary Visual Indication:** {disease_icon} **{suspected_disease}** *(Visual Match Confidence: {confidence}%)*")
+                    
+                    st.markdown("---")
+                    st.markdown("##### 3. Diagnostic Verification Questions:")
+                    st.write("Please answer the following confirmatory clinical questions:")
+                    ans1 = st.checkbox(f"1. {q1}", key="sym_q1")
+                    ans2 = st.checkbox(f"2. {q2}", key="sym_q2")
+                    ans3 = st.checkbox(f"3. {q3}", key="sym_q3")
+
+                    yes_count = sum([ans1, ans2, ans3])
+                    final_confidence = min(98, confidence + (yes_count * 3) - ((3 - yes_count) * 2))
+
+                    st.markdown(f"""
+                    <div class="result-box-warning">
+                        <h3>🎯 Primary Disease Identified: {disease_icon} {suspected_disease}</h3>
+                        <p><b>Diagnostic Match Confidence: {final_confidence}%</b></p>
+                        <p>Visual biomarkers combined with your symptom responses strongly correlate with <b>{suspected_disease}</b>.</p>
+                        <p><b>Next Step:</b> Run the full specialized Machine Learning model for this condition to obtain precise numerical risk probabilities.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                else:
+                    st.info("👈 Please select a clinical benchmark image or upload an image to begin visual disease identification.")
 
 # -------------------------------------------------------------
 # TAB 3: PARKINSON'S DISEASE (VOICE SCREENING)
