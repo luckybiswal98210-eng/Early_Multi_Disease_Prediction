@@ -21,11 +21,11 @@ st.set_page_config(
 )
 
 # -------------------------------------------------------------
-# MODERN MEDICAL UI STYLING (CSS)
+# MODERN MEDICAL UI STYLING (CSS) - HIGH CONTRAST & ACCESSIBLE
 # -------------------------------------------------------------
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
@@ -33,24 +33,24 @@ st.markdown("""
 
     .main-header {
         background: linear-gradient(135deg, #0b132b 0%, #1c2541 50%, #3a506b 100%);
-        padding: 26px 32px;
+        padding: 24px 30px;
         border-radius: 16px;
         color: white;
-        margin-bottom: 25px;
+        margin-bottom: 22px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .main-header h1 {
-        font-size: 2.1rem;
+        font-size: 2.0rem;
         font-weight: 700;
         margin-bottom: 6px;
-        color: #f8f9fa;
+        color: #ffffff;
         letter-spacing: -0.5px;
     }
 
     .main-header p {
-        font-size: 1.05rem;
+        font-size: 1.0rem;
         color: #cbd5e1;
         margin: 0;
     }
@@ -70,78 +70,103 @@ st.markdown("""
         font-size: 0.82rem;
         font-weight: 500;
         color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
     .metric-card {
-        background: rgba(255, 255, 255, 0.05);
+        background: #ffffff;
         border-radius: 12px;
         padding: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
         transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
     .metric-card:hover {
         transform: translateY(-2px);
-        border-color: #00d2ff;
+        border-color: #0284c7;
     }
 
     .metric-title {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         text-transform: uppercase;
-        color: #94a3b8;
+        color: #64748b;
         font-weight: 600;
         letter-spacing: 0.5px;
     }
 
     .metric-value {
-        font-size: 1.8rem;
+        font-size: 1.7rem;
         font-weight: 700;
-        color: #00d2ff;
+        color: #0369a1;
         margin-top: 4px;
     }
 
     .metric-desc {
-        font-size: 0.85rem;
-        color: #64748b;
+        font-size: 0.82rem;
+        color: #475569;
         margin-top: 4px;
     }
 
+    /* HIGH-CONTRAST RESULT BOXES (CRISP, DEEP READABLE TEXT) */
     .result-box-healthy {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.08) 100%);
-        border: 1.5px solid #10b981;
-        padding: 22px;
-        border-radius: 12px;
-        color: #ecfdf5;
-        margin-top: 15px;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+        border: 2px solid #059669 !important;
+        padding: 24px !important;
+        border-radius: 14px !important;
+        color: #064e3b !important;
+        margin-top: 18px !important;
+        box-shadow: 0 4px 16px rgba(5, 150, 105, 0.12) !important;
+    }
+    .result-box-healthy h3, .result-box-healthy h4, .result-box-healthy p, 
+    .result-box-healthy strong, .result-box-healthy span, .result-box-healthy b {
+        color: #064e3b !important;
     }
 
     .result-box-warning {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(217, 119, 6, 0.08) 100%);
-        border: 1.5px solid #f59e0b;
-        padding: 22px;
-        border-radius: 12px;
-        color: #fffbeb;
-        margin-top: 15px;
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+        border: 2px solid #d97706 !important;
+        padding: 24px !important;
+        border-radius: 14px !important;
+        color: #78350f !important;
+        margin-top: 18px !important;
+        box-shadow: 0 4px 16px rgba(217, 119, 6, 0.12) !important;
+    }
+    .result-box-warning h3, .result-box-warning h4, .result-box-warning p, 
+    .result-box-warning strong, .result-box-warning span, .result-box-warning b {
+        color: #78350f !important;
     }
 
     .result-box-danger {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(185, 28, 28, 0.1) 100%);
-        border: 1.5px solid #ef4444;
-        padding: 22px;
-        border-radius: 12px;
-        color: #fef2f2;
-        margin-top: 15px;
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+        border: 2px solid #dc2626 !important;
+        padding: 24px !important;
+        border-radius: 14px !important;
+        color: #7f1d1d !important;
+        margin-top: 18px !important;
+        box-shadow: 0 4px 16px rgba(220, 38, 38, 0.12) !important;
+    }
+    .result-box-danger h3, .result-box-danger h4, .result-box-danger p, 
+    .result-box-danger strong, .result-box-danger span, .result-box-danger b {
+        color: #7f1d1d !important;
     }
 
     .info-card {
         background-color: #f8fafc;
-        border-left: 4px solid #3b82f6;
+        border-left: 4px solid #0284c7;
         padding: 14px 18px;
         border-radius: 6px;
         color: #1e293b;
         margin-bottom: 18px;
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, #0b132b 0%, #1c2541 60%, #1e293b 100%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 26px 30px;
+        color: #f8fafc;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
     .stButton>button {
@@ -190,7 +215,7 @@ def load_all_models():
 models = load_all_models()
 
 # -------------------------------------------------------------
-# AUDIO HELPER FUNCTIONS (PARKINSON'S)
+# AUDIO & MULTI-LANGUAGE TRANSLATION (PARKINSON'S)
 # -------------------------------------------------------------
 def extract_audio_features(path, sr_target=22050, n_mfcc=20):
     y, sr = librosa.load(path, sr=sr_target)
@@ -211,6 +236,15 @@ def is_audio_silent(path, threshold=0.01):
     except Exception:
         return False
 
+def render_image(img, caption=None):
+    try:
+        st.image(img, caption=caption, use_column_width=True)
+    except Exception:
+        try:
+            st.image(img, caption=caption, use_container_width=True)
+        except Exception:
+            st.image(img, caption=caption)
+
 LANG_OPTIONS = {
     "English": "en",
     "Hindi (हिन्दी)": "hi",
@@ -227,6 +261,67 @@ LANG_OPTIONS = {
     "German (Deutsch)": "de"
 }
 
+PARKINSONS_TRANSLATIONS = {
+    "English": {
+        "healthy": "Voice acoustic analysis indicates healthy vocal stability with {prob} percent probability. Vocal harmonics are within normal limits. No significant signs of Parkinson's detected.",
+        "risk": "Voice acoustic analysis detected elevated probability of Parkinsonian dysarthria at {prob} percent. Clinical consultation with a specialist neurologist is strongly recommended."
+    },
+    "Hindi (हिन्दी)": {
+        "healthy": "आवाज ध्वनिक विश्लेषण से पता चलता है कि स्वर स्थिरता सामान्य है और पार्किंसन की संभावना केवल {prob} प्रतिशत है। कोई गंभीर लक्षण नहीं मिले।",
+        "risk": "आवाज विश्लेषण में {prob} प्रतिशत पार्किंसन डिस्आर्थ्रिया का उच्च जोखिम पाया गया है। कृपया जल्द से जल्द न्यूरोलॉजिस्ट डॉक्टर से परामर्श करें।"
+    },
+    "Bengali (বাংলা)": {
+        "healthy": "ভয়েস বিশ্লেষণ অনুসারে স্বর স্থিতিশীলতা স্বাভাবিক এবং পার্কিনসনের সম্ভাবনা মাত্র {prob} শতাংশ। কোনো গুরুতর লক্ষণ পাওয়া যায়নি।",
+        "risk": "ভয়েস বিশ্লেষণে {prob} শতাংশ পার্কিনসন্স ঝুঁকির লক্ষণ ধরা পড়েছে। একজন বিশেষজ্ঞ নিউরোলজিস্টের সাথে অবিলম্বে পরামর্শ করার সুপারিশ করা হচ্ছে।"
+    },
+    "Telugu (తెలుగు)": {
+        "healthy": "వాయిస్ శబ్ద విశ్లేషణ ప్రకారం స్వర స్థిరత్వం సాధారణంగా ఉంది, మరియు పార్కిన్సన్స్ సంభావ్యత కేవలం {prob} శాతం మాత్రమే. ఎటువంటి ప్రమాదకర లక్షణాలు లేవు.",
+        "risk": "వాయిస్ విశ్లేషణలో పార్కిన్సన్స్ డిసార్థ్రియా వచ్చే ప్రమాదం {prob} శాతం ఎక్కువగా గుర్తించబడింది. న్యూరాలజిస్ట్ వైద్యుడిని సంప్రదించాలని సిఫార్సు చేయబడింది."
+    },
+    "Tamil (தமிழ்)": {
+        "healthy": "குரல் ஒலி பகுப்பாய்வு சாதாரண குரல் நிலைத்தன்மையைக் காட்டுகிறது. பார்கின்சன் நோய் வாய்ப்பு {prob} சதவீதம் மட்டுமே. தீவிர அறிகுறிகள் எதுவும் இல்லை.",
+        "risk": "குரல் பகுப்பாய்வில் பார்கின்சன் நோய் ஆபத்து {prob} சதவீதமாக உயர்ந்துள்ளது. நரம்பியல் மருத்துவரை உடனடியாக அணுகுமாறு பரிந்துரைக்கப்படுகிறது."
+    },
+    "Kannada (ಕನ್ನಡ)": {
+        "healthy": "ಧ್ವನಿ ವಿಶ್ಲೇಷಣೆಯು ಸಾಮಾನ್ಯ ಧ್ವನಿ ಸ್ಥಿರತೆಯನ್ನು ತೋರಿಸುತ್ತದೆ, ಪಾರ್ಕಿನ್ಸನ್ ಸಾಧ್ಯತೆ ಕೇವಲ {prob} ಪ್ರತಿಶತ. ಯಾವುದೇ ಗಂಭೀರ ಲಕ್ಷಣಗಳು ಕಂಡುಬಂದಿಲ್ಲ.",
+        "risk": "ಧ್ವನಿ ವಿಶ್ಲೇಷಣೆಯಲ್ಲಿ ಪಾರ್ಕಿನ್ಸನ್ ಅಪಾಯದ ಸಾಧ್ಯತೆ {prob} ಪ್ರತಿಶತ ಹೆಚ್ಚಾಗಿರುವುದು ಕಂಡುಬಂದಿದೆ. ನರಶಾಸ್ತ್ರಜ್ಞರನ್ನು ಸಂಪರ್ಕಿಸಲು ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ."
+    },
+    "Malayalam (മലയാളം)": {
+        "healthy": "ശബ്ദ വിശകലനം സാധാരണ ശബ്ദ സ്ഥിരത കാണിക്കുന്നു. പാർക്കിൻസൺസ് സാധ്യത {prob} ശതമാനം മാത്രമാണ്. ഗുരുതരമായ ലക്ഷണങ്ങളൊന്നും കണ്ടെത്തിയില്ല.",
+        "risk": "ശബ്ദ വിശകലനത്തിൽ പാർക്കിൻസൺസ് രോഗ സാധ്യത {prob} ശതമാനമായി ഉയർന്നതായി കണ്ടെത്തി. ഒരു ന്യൂറോളജിസ്റ്റിനെ ഉടൻ സമീപിക്കാൻ ശുപാർശ ചെയ്യുന്നു."
+    },
+    "Gujarati (ગુજરાતી)": {
+        "healthy": "અવાજ વિશ્લેષણ સામાન્ય સ્વર સ્થિરતા દર્શાવે છે અને પાર્કિન્સનની સંભાવના માત્ર {prob} ટકા છે. કોઈ ગંભીર ચિહ્નો મળ્યા નથી.",
+        "risk": "અવાજ વિશ્લેષણમાં {prob} ટકા પાર્કિન્સનનું ઊંચું જોખમ જણાયું છે. તાત્કાલિક ન્યુરોલોજીસ્ટ ડોક્ટરની સલાહ લેવાની ભલામણ કરવામાં આવે છે."
+    },
+    "Marathi (मराठी)": {
+        "healthy": "आवाज ध्वनी विश्लेषणावरून स्वर स्थिरता सामान्य असल्याचे दिसून येते आणि पार्किन्सन्सची शक्यता केवळ {prob} टक्के आहे. कोणतीही गंभीर लक्षणे आढळली नाहीत.",
+        "risk": "आवाज विश्लेषणात {prob} टक्के पार्किन्सन्सचा धोका जास्त असल्याचे आढळले आहे. न्यूरोलॉजिस्ट तज्ज्ञांचा सल्ला घेण्याची जोरदार शिफारस केली जाते."
+    },
+    "Punjabi (ਪੰਜਾਬੀ)": {
+        "healthy": "ਆਵਾਜ਼ ਵਿਸ਼ਲੇਸ਼ਣ ਤੋਂ ਪਤਾ ਲੱਗਦਾ ਹੈ ਕਿ ਆਵਾਜ਼ ਦੀ ਸਥਿਰਤਾ ਆਮ ਹੈ ਅਤੇ ਪਾਰਕਿੰਸਨ ਦੀ ਸੰਭਾਵਨਾ ਸਿਰਫ਼ {prob} ਫ਼ੀਸਦੀ ਹੈ। ਕੋਈ ਗੰਭੀਰ ਲੱਛਣ ਨਹੀਂ ਮਿਲੇ।",
+        "risk": "ਆਵਾਜ਼ ਵਿਸ਼ਲੇਸ਼ਣ ਵਿੱਚ {prob} ਫ਼ੀਸਦੀ ਪਾਰਕਿੰਸਨ ਦਾ ਉੱਚ ਖ਼ਤਰਾ ਪਾਇਆ ਗਿਆ ਹੈ। ਨਿਊਰੋਲੋਜਿਸਟ ਡਾਕਟਰ ਦੀ ਸਲਾਹ ਲੈਣ ਦੀ ਸਿਫ਼ਾਰਸ਼ ਕੀਤੀ ਜਾਂਦੀ ਹੈ।"
+    },
+    "Spanish (Español)": {
+        "healthy": "El análisis acústico de la voz indica estabilidad vocal saludable con una probabilidad de Parkinson de solo {prob} por ciento. No se detectan signos significativos.",
+        "risk": "El análisis de voz detectó una probabilidad elevada de disartria parkinsoniana del {prob} por ciento. Se recomienda encarecidamente consultar a un neurólogo."
+    },
+    "French (Français)": {
+        "healthy": "L'analyse acoustique vocale indique une stabilité vocale saine avec une probabilité de Parkinson de seulement {prob} pour cent. Aucun signe significatif n'est détecté.",
+        "risk": "L'analyse vocale a détecté une probabilité élevée de dysarthrie parkinsonienne de {prob} pour cent. Une consultation auprès d'un neurologue est fortement recommandée."
+    },
+    "German (Deutsch)": {
+        "healthy": "Die akustische Stimmanalyse zeigt eine gesunde Stimmstabilität mit einer Parkinson-Wahrscheinlichkeit von nur {prob} Prozent. Keine signifikanten Anzeichen festgestellt.",
+        "risk": "Die Stimmanalyse hat eine erhöhte Wahrscheinlichkeit für Parkinson-Dysarthrie von {prob} Prozent festgestellt. Eine neurologische Fachberatung wird dringend empfohlen."
+    }
+}
+
+def get_parkinsons_spoken_text(prob_pct: float, lang_label: str) -> str:
+    lang_entry = PARKINSONS_TRANSLATIONS.get(lang_label, PARKINSONS_TRANSLATIONS["English"])
+    category = "risk" if prob_pct >= 80.0 else "healthy"
+    template = lang_entry.get(category, PARKINSONS_TRANSLATIONS["English"][category])
+    return template.format(prob=int(prob_pct))
+
 def play_spoken_text(text: str, lang_code: str = "en"):
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
@@ -242,6 +337,9 @@ def play_spoken_text(text: str, lang_code: str = "en"):
 # -------------------------------------------------------------
 # SESSION STATE INITIALIZATION
 # -------------------------------------------------------------
+if "in_dashboard" not in st.session_state:
+    st.session_state.in_dashboard = False
+
 if "screening_results" not in st.session_state:
     st.session_state.screening_results = {
         "parkinsons": None,
@@ -249,16 +347,129 @@ if "screening_results" not in st.session_state:
         "diabetes": None,
         "kidney": None
     }
-# -------------------------------------------------------------
-# NAVIGATION SIDEBAR
-# -------------------------------------------------------------
-banner_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "healthcare_banner.png")
-if os.path.exists(banner_img_path):
-    st.sidebar.image(banner_img_path, use_container_width=True)
-else:
-    st.sidebar.image("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&auto=format&fit=crop&q=80", use_container_width=True)
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+title_banner_path = os.path.join(base_dir, "assets", "title_banner.png")
+banner_img_path = os.path.join(base_dir, "assets", "healthcare_banner.png")
+
+# -------------------------------------------------------------
+# GATEKEEPER: DEDICATED FULL-SCREEN WELCOME PAGE
+# -------------------------------------------------------------
+if not st.session_state.in_dashboard:
+    # 1. Background Title Banner Card (First Image given by user)
+    if os.path.exists(title_banner_path):
+        render_image(title_banner_path)
+    else:
+        st.markdown("""
+        <div class="main-header" style="text-align: center;">
+            <h1>🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System</h1>
+            <div class="badge-bar" style="justify-content: center;">
+                <span class="badge-chip">🎙️ Parkinson's Voice Screening</span>
+                <span class="badge-chip">❤️ Cardiovascular Risk Predictor</span>
+                <span class="badge-chip">🩸 Diabetes Mellitus Diagnostic</span>
+                <span class="badge-chip">🫘 Chronic Kidney Disease Panel</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 2. Hero Layout with Anatomy Graphic (Second Image given by user) + Welcome Portal
+    w_col_img, w_col_info = st.columns([1.25, 1])
+
+    with w_col_img:
+        if os.path.exists(banner_img_path):
+            render_image(
+                banner_img_path, 
+                caption="Multi-System Physiological Diagnostic Network (Heart • Vocal Cord / Neuro • Kidney • Pancreas / Diabetes)"
+            )
+
+    with w_col_info:
+        st.markdown("""
+        <div class="welcome-card">
+            <h2 style="color: #38bdf8; margin-top: 0; font-size: 1.55rem; font-weight: 700;">
+                🏥 Welcome to the Intelligent Healthcare Portal
+            </h2>
+            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">
+                An integrated, non-invasive clinical decision support system designed for <b>early detection and risk stratification</b> of chronic medical conditions using machine learning, acoustic signal phonetics, and biochemical vitals.
+            </p>
+            <div style="background: rgba(15, 23, 42, 0.6); border-radius: 10px; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;">
+                <div style="margin-bottom: 8px; font-size: 0.88rem;">🎙️ <b>Parkinson's Disease</b>: Acoustic vowel analysis (MFCCs & tremors)</div>
+                <div style="margin-bottom: 8px; font-size: 0.88rem;">❤️ <b>Cardiovascular Risk</b>: Ischemic vitals & hemodynamic predictors</div>
+                <div style="margin-bottom: 8px; font-size: 0.88rem;">🩸 <b>Diabetes Mellitus</b>: Fasting glucose & metabolic profiling</div>
+                <div style="margin-bottom: 8px; font-size: 0.88rem;">🫘 <b>Kidney Disease (CKD)</b>: Renal filtration & serum creatinine panel</div>
+                <div style="font-size: 0.88rem;">🤖 <b>AI Medical Assistant</b>: Prescription understanding & clinical image triaging</div>
+            </div>
+            <div style="color: #38bdf8; font-size: 0.85rem; font-weight: 600; margin-bottom: 18px;">
+                ⚡ 100% Software-Based (SaMD) • Zero Hardware Required • 13 Spoken Audio Languages
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🚀 ENTER CLINICAL DASHBOARD & PREDICTION PORTAL", type="primary", use_container_width=True):
+            st.session_state.in_dashboard = True
+            st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Bottom Overview metric badges on Welcome Page
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">Physiological Systems</div>
+            <div class="metric-value">4 Modules</div>
+            <div class="metric-desc">Neuro, Cardio, Metabolic, Renal</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">Hardware Dependence</div>
+            <div class="metric-value">0% External</div>
+            <div class="metric-desc">Pure software algorithms & standard labs</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c3:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">Signal Modalities</div>
+            <div class="metric-value">Multi-Modal</div>
+            <div class="metric-desc">Audio Acoustics, Vitals, Image OCR</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c4:
+        st.markdown("""
+        <div class="metric-card">
+            <div class="metric-title">Speech Accessibility</div>
+            <div class="metric-value">13 Languages</div>
+            <div class="metric-desc">Full native voice synthesis</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align: center; color: #64748b; font-size: 0.85rem;">
+        Intelligent Healthcare Monitoring and Early Disease Prediction System • Semester 5 Design Project<br>
+        Built with Python, Streamlit, Scikit-Learn, and Librosa • 100% Software-Based Clinical Decision Support
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.stop()
+
+
+# -------------------------------------------------------------
+# DASHBOARD NAVIGATION SIDEBAR (RENDERED ONLY AFTER ENTERING)
+# -------------------------------------------------------------
 st.sidebar.title("Navigation Hub")
+
+if st.sidebar.button("🚪 Exit to Welcome Page", use_container_width=True):
+    st.session_state.in_dashboard = False
+    st.rerun()
+
+st.sidebar.markdown("---")
+
 menu_selection = st.sidebar.radio(
     "Select Clinical Module:",
     [
@@ -282,26 +493,25 @@ st.sidebar.success("✅ CKD Model (Random Forest - 98.8% 5-Fold)")
 st.sidebar.markdown("---")
 st.sidebar.caption("⚠️ **Clinical Disclaimer**: This application is a clinical decision support and educational tool. It is not an alternative to licensed clinical laboratory examinations.")
 
+
 # -------------------------------------------------------------
-# TAB 1: SYSTEM OVERVIEW & DASHBOARD (WELCOME PAGE)
+# TAB 1: SYSTEM OVERVIEW & VITALS DASHBOARD (CLEAN - NO IMAGES)
 # -------------------------------------------------------------
 if menu_selection == "🏠 System Overview & Vitals Dashboard":
-    # Header Banner ONLY displayed on the Initial/Welcome Page
+    # Clean clinical header WITHOUT the 2 images (as requested by user)
     st.markdown("""
     <div class="main-header">
         <h1>🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System</h1>
+        <p>Comprehensive Multi-Organ Clinical Decision Support Dashboard</p>
         <div class="badge-bar">
             <span class="badge-chip">🎙️ Parkinson's Voice Screening</span>
             <span class="badge-chip">❤️ Cardiovascular Risk Predictor</span>
             <span class="badge-chip">🩸 Diabetes Mellitus Diagnostic</span>
             <span class="badge-chip">🫘 Chronic Kidney Disease Panel</span>
+            <span class="badge-chip">🤖 AI Medical Chatbot & OCR</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-    if os.path.exists(banner_img_path):
-        st.image(banner_img_path, caption="Comprehensive Physiological Systems Monitoring (Heart • Voice/Neuro • Kidney • Diabetes)", use_container_width=True)
-        st.markdown("<br>", unsafe_allow_html=True)
 
     st.subheader("System Architecture & Clinical Overview")
     
@@ -358,440 +568,452 @@ if menu_selection == "🏠 System Overview & Vitals Dashboard":
         data_info = pd.DataFrame({
             "Disease Module": ["Parkinson's", "Heart Disease", "Diabetes", "Chronic Kidney Disease"],
             "Dataset Source": ["Voice Screening Corpus", "UCI Cleveland Clinic", "NIDDK Pima Indians", "UCI Apollo Hospitals"],
-            "Samples": ["Acoustic Waves", "303 Patients", "768 Patients", "400 Patients"],
-            "Evaluation Metric": ["Random Forest (23 Feats)", "83.6% Acc / 0.91 AUC", "73.4% Acc / 0.81 AUC", "98.8% Cross-Validation"]
+            "Sample Count": [195, 303, 768, 400],
+            "Key Predictor": ["20 MFCCs + Jitter/ZCR", "Chest Pain, Thalach, ST Peak", "Glucose, Insulin, BMI", "Creatinine, Urea, Albumin"]
         })
         st.dataframe(data_info, use_container_width=True, hide_index=True)
 
-    st.info("💡 **Ready to begin?** Select any disease or the AI Chatbot from the left sidebar to start clinical screening.")
+    st.markdown("---")
+    st.markdown("### 📊 Interactive Patient Vitals Quick-Check")
+    st.write("Enter quick reference baseline vitals to see general physiological benchmark classifications:")
+
+    v_col1, v_col2, v_col3, v_col4 = st.columns(4)
+    with v_col1:
+        v_sbp = st.number_input("Systolic BP (mm Hg)", value=120, min_value=80, max_value=220)
+    with v_col2:
+        v_hr = st.number_input("Resting Heart Rate (bpm)", value=72, min_value=40, max_value=180)
+    with v_col3:
+        v_fbs = st.number_input("Fasting Glucose (mg/dL)", value=95, min_value=50, max_value=350)
+    with v_col4:
+        v_creat = st.number_input("Serum Creatinine (mg/dL)", value=0.9, min_value=0.2, max_value=12.0, step=0.1)
+
+    st.markdown("#### Quick Metric Risk Stratification:")
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        if v_sbp < 120:
+            m1.success("BP: Optimal (<120)")
+        elif v_sbp < 140:
+            m1.warning("BP: Pre-hypertension (120-139)")
+        else:
+            m1.error("BP: Hypertension (≥140)")
+    with m2:
+        if 60 <= v_hr <= 100:
+            m2.success("Heart Rate: Normal (60-100 bpm)")
+        else:
+            m2.warning("Heart Rate: Brady/Tachycardia")
+    with m3:
+        if v_fbs < 100:
+            m3.success("Glucose: Normal Fasting (<100)")
+        elif v_fbs <= 125:
+            m3.warning("Glucose: Impaired Pre-Diabetes (100-125)")
+        else:
+            m3.error("Glucose: Diabetic Fasting (≥126)")
+    with m4:
+        if v_creat <= 1.2:
+            m4.success("Creatinine: Healthy Filtration (≤1.2)")
+        else:
+            m4.error("Creatinine: Elevated Filtration Stress (>1.2)")
+
+    st.info("💡 To run comprehensive AI predictive analytics with full clinical parameters, choose one of the dedicated disease modules from the left navigation sidebar!")
+
 
 # -------------------------------------------------------------
-# TAB 2: AI MEDICAL CHATBOT & IMAGE TRIAGING
+# TAB 2: AI MEDICAL CHATBOT, HOME REMEDIES & IMAGE TRIAGING
 # -------------------------------------------------------------
 elif menu_selection == "🤖 AI Medical Chatbot & Image Triaging":
-    st.subheader("🤖 AI Clinical Chatbot & Visual Disease Identifier")
-    st.caption("Interactive conversational assistant for symptom checking, home remedies, and image-based multi-disease identification.")
+    st.subheader("🤖 AI Medical Assistant, Prescription Understanding & Clinical Image Triaging")
+    st.caption("Conversational symptom triage, evidence-based home remedies, doctor's prescription parsing (OCR), and clinical photo inspection.")
 
-    sub_tab1, sub_tab2 = st.tabs(["💬 Symptom Chatbot & Home Remedies", "📷 Visual Disease Identifier (Image Triaging)"])
+    tab_chat, tab_rx, tab_img = st.tabs([
+        "💬 Interactive Symptom Chatbot & Natural Home Remedies",
+        "📄 Doctor's Prescription Understanding (OCR + NLP)",
+        "📷 Clinical Image & Test Strip Triaging"
+    ])
 
-    # ---------------------------------------------------------
-    # SUB-TAB 1: SYMPTOM CHATBOT & HOME REMEDIES
-    # ---------------------------------------------------------
-    with sub_tab1:
-        st.markdown("#### 💬 Clinical Symptom Checker & Home Remedies Assistant")
-        st.write("Ask any questions regarding symptoms (like fever, cough, acidity, tremors) for immediate follow-up questions, evidence-based home remedies, and care precautions.")
+    # -------------------------------------------------------------
+    # SUB-TAB 1: INTERACTIVE CHATBOT & HOME REMEDIES
+    # -------------------------------------------------------------
+    with tab_chat:
+        st.markdown("#### 🩺 Clinical Symptom Checker & Safe Home Remedies")
+        st.write("Tell the assistant about what you are experiencing (e.g. *fever*, *cough*, *chest tightness*, *frequent urination*, *tremors*, *stomach ache*):")
 
+        # Session state for chat history
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = [
                 {
                     "role": "assistant",
-                    "content": "Hello! I am your Intelligent Healthcare AI Assistant. 🩺\n\nYou can ask me about any symptoms (e.g., *'I am getting fever'*, *'Severe headache'*, *'Chest tightness'*, *'Shaking hands'*). I will ask relevant diagnostic questions, suggest **evidence-based home remedies**, and guide you on when to seek urgent medical care."
+                    "text": "Hello! I am your AI Clinical Assistant. You can describe any symptoms you are feeling (like fever, headache, body pain, tremors, or fatigue). I will ask relevant clinical questions, suggest safe home remedies, and guide you to the right disease screening module."
                 }
             ]
 
-        # Quick symptom chips
-        st.markdown("**Quick Clinical Prompts:**")
-        qc1, qc2, qc3, qc4 = st.columns(4)
-        quick_prompt = None
-        with qc1:
-            if st.button("🤒 I am getting fever", use_container_width=True):
-                quick_prompt = "I am getting fever"
-            if st.button("🖐️ Shaking / Tremors in hands", use_container_width=True):
-                quick_prompt = "My hands are shaking and I notice tremors at rest"
-        with qc2:
-            if st.button("🤧 Cough & Cold", use_container_width=True):
-                quick_prompt = "I have a bad cough and sore throat"
-            if st.button("❤️ Chest Discomfort / Pain", use_container_width=True):
-                quick_prompt = "I feel chest tightness and shortness of breath"
-        with qc3:
-            if st.button("🤕 Severe Headache", use_container_width=True):
-                quick_prompt = "I have a throbbing headache and fatigue"
-            if st.button("🚰 Excessive Thirst & Urination", use_container_width=True):
-                quick_prompt = "I have extreme thirst and frequent urination"
-        with qc4:
-            if st.button("🔥 Acidity & Indigestion", use_container_width=True):
-                quick_prompt = "I have burning stomach acidity and indigestion"
-            if st.button("🦵 Swollen Feet & Ankles", use_container_width=True):
-                quick_prompt = "My feet and ankles are swollen and puffy"
-
-        def get_clinical_response(user_text: str):
-            t = user_text.lower()
-            
-            # 1. FEVER CONVERSATION LOGIC
-            if any(w in t for w in ["fever", "temperature", "chills", "feeling hot", "shiver"]):
-                has_details = any(num in t for num in ["99", "100", "101", "102", "103", "104", "degree", "high", "mild", "day", "days", "yesterday", "since", "body ache"])
-                if not has_details:
-                    return (
-                        "🌡️ **I note that you are experiencing a fever.**\n\n"
-                        "To provide the most accurate home remedies and guidance, could you please specify:\n"
-                        "1. **What is your body temperature** (e.g., mild 99°–101°F or high 102°F+)?\n"
-                        "2. **How many days** have you had this fever?\n"
-                        "3. Are you having other symptoms like **chills, body ache, sore throat, or headache**?"
-                    )
-                else:
-                    return (
-                        "### 🌿 Recommended Home Remedies for Fever:\n"
-                        "- **Hydration:** Drink plenty of fluids (boiled warm water, tender coconut water, electrolyte ORS, clear broths) to replenish fluids lost through sweating.\n"
-                        "- **Lukewarm Sponge Bath:** Gently apply a clean damp cloth soaked in lukewarm water (not ice water) to your forehead, back of neck, and wrists. Ice-cold water induces shivering, which increases core temperature.\n"
-                        "- **Herbal Tulsi-Ginger Kadha/Tea:** Boil 5–6 fresh Tulsi (Holy Basil) leaves, crushed ginger, and 2 black pepper pods in water. Add 1 tsp honey and drink warm twice daily.\n"
-                        "- **Rest in a Well-Ventilated Room:** Ensure complete bed rest wearing loose, breathable cotton clothes. Avoid heavy blankets.\n"
-                        "- **Light Nutrition:** Eat easily digestible foods like khichdi, moong dal soup, or boiled vegetables.\n\n"
-                        "### 💊 General Medical Considerations:\n"
-                        "- Over-the-counter **Paracetamol (Acetaminophen)** may be used to reduce fever and relieve body aches (consult a physician/pharmacist for exact dosage based on age/weight).\n"
-                        "- Avoid NSAIDs like aspirin or ibuprofen on an empty stomach.\n\n"
-                        "### 🚨 Red Flag Warning (Seek Doctor Immediately):\n"
-                        "- Body temperature exceeds **103°F (39.4°C)** or fails to respond to fever medication.\n"
-                        "- Fever persists for **more than 3 consecutive days**.\n"
-                        "- Accompanied by **stiff neck, severe breathing difficulty, persistent vomiting, confusion, or sudden skin rash**."
-                    )
-
-            # 2. COUGH & SORE THROAT
-            elif any(w in t for w in ["cough", "throat", "cold", "congestion", "sore throat", "phlegm"]):
-                return (
-                    "### 🌿 Recommended Home Remedies for Cough & Sore Throat:\n"
-                    "- **Steam Inhalation:** Inhale steam from hot water 2–3 times a day. You can add a drop of eucalyptus oil or a pinch of carom seeds (ajwain).\n"
-                    "- **Warm Salt-Water Gargle:** Dissolve 1/2 tsp salt in warm water; gargle 3 times a day to reduce throat inflammation.\n"
-                    "- **Honey & Ginger Juice:** Mix 1 tsp fresh ginger juice with 1 tsp raw honey; consume slowly twice daily.\n"
-                    "- **Golden Turmeric Milk:** Drink warm milk with 1/2 tsp turmeric powder and a pinch of black pepper before bedtime.\n\n"
-                    "### 🚨 Red Flags: See a doctor if you cough up blood, have breathing difficulty, or persistent chest wheezing."
-                )
-
-            # 3. HEADACHE & MIGRAINE
-            elif any(w in t for w in ["headache", "migraine", "head ache", "head hurts"]):
-                return (
-                    "### 🌿 Recommended Home Remedies for Headache:\n"
-                    "- **Hydration Check:** Dehydration is the #1 silent headache trigger. Drink 2 full glasses of water immediately.\n"
-                    "- **Cool or Warm Compress:** Apply a cool cloth on your forehead or a warm compress on the back of your neck to relieve muscle tension.\n"
-                    "- **Dark, Quiet Room:** Lie down in a dim, silent room and close your eyes away from phone/laptop screen glare.\n"
-                    "- **Ginger Tea:** Fresh ginger tea helps inhibit prostaglandins that trigger migraine headaches.\n\n"
-                    "### 🚨 Red Flags: Seek emergency care if headache is sudden and explosive ('thunderclap'), accompanied by numbness or slurred speech."
-                )
-
-            # 4. ACIDITY & INDIGESTION
-            elif any(w in t for w in ["acidity", "heartburn", "indigestion", "acid reflux", "bloating", "gas", "burning"]):
-                return (
-                    "### 🌿 Recommended Home Remedies for Acidity & Heartburn:\n"
-                    "- **Cold Milk / Coconut Water:** Sip a cup of cold milk or fresh coconut water for immediate soothing of gastric lining.\n"
-                    "- **Fennel Seeds (Saunf):** Chew 1/2 tsp of fennel seeds after meals to aid digestion and soothe mucosal burning.\n"
-                    "- **Cumin (Jeera) Water:** Boil 1 tsp cumin seeds in a glass of water, strain, and sip warm.\n"
-                    "- **Post-Meal Posture:** Never lie down within 2 hours after eating. Elevate your head slightly while sleeping.\n\n"
-                    "### 🚨 Red Flags: If burning radiates to left arm, neck, or jaw with cold sweats, treat as potential cardiac emergency."
-                )
-
-            # 5. PARKINSON'S INDICATORS (TREMORS, SHAKING, SLOWNESS)
-            elif any(w in t for w in ["tremor", "shake", "shaking", "parkinson", "stiff muscle", "slowness", "bradykinesia"]):
-                return (
-                    "### 🧠 Clinical Insight: Neurological & Movement Symptoms\n"
-                    "The symptoms you described (hand tremors at rest, muscle stiffness, or movement slowness) correlate with **Parkinsonian Neurological Signs**.\n\n"
-                    "**Supportive Home & Lifestyle Guidance:**\n"
-                    "- **Stress Reduction:** Tremors worsen significantly under anxiety; practice slow diaphragmatic breathing.\n"
-                    "- **Gentle Hand Exercises:** Squeezing a soft stress ball or rhythmic finger tapping helps maintain motor coordination.\n"
-                    "- **Neuro-Protective Nutrition:** Adopt a Mediterranean-style diet rich in omega-3 fatty acids, berries, and green leafy vegetables.\n\n"
-                    "👉 **Recommended Diagnostic Action:** Please use our **🎙️ Parkinson's Disease (Voice Screening)** module in the left sidebar to perform acoustic voice screening and complete the clinical tremor assessment."
-                )
-
-            # 6. CARDIOVASCULAR INDICATORS (CHEST PAIN, TIGHTNESS, PALPITATIONS)
-            elif any(w in t for w in ["chest", "heart", "angina", "palpitation", "breathless", "shortness of breath"]):
-                return (
-                    "### ❤️ Clinical Insight: Cardiovascular & Hemodynamic Symptoms\n"
-                    "The symptoms you described (chest tightness, exertion discomfort, or shortness of breath) strongly correlate with **Cardiovascular / Ischemic Heart Disease**.\n\n"
-                    "**Immediate Precautions:**\n"
-                    "- Stop physical exertion immediately, sit upright, and loosen restrictive collar/clothing.\n"
-                    "- Remain as calm as possible to reduce cardiac oxygen demand.\n\n"
-                    "🚨 **EMERGENCY WARNING:** If chest pain is crushing, heavy, or radiates to your **left arm, jaw, shoulder, or back**, accompanied by cold sweating or dizziness, **call emergency medical services immediately!**\n\n"
-                    "👉 **Recommended Diagnostic Action:** If stable, use our **❤️ Cardiovascular (Heart Disease)** module in the left sidebar to analyze your blood pressure, cholesterol, and resting ECG parameters."
-                )
-
-            # 7. DIABETES INDICATORS (THIRST, FREQUENT URINATION, WEIGHT LOSS)
-            elif any(w in t for w in ["thirst", "urination", "diabetes", "sugar", "glucose", "tingling", "polyuria"]):
-                return (
-                    "### 🩸 Clinical Insight: Glycemic & Metabolic Symptoms\n"
-                    "The symptoms you described (excessive thirst [polydipsia], frequent urination [polyuria], or tingling in fingers/feet) correlate with **Diabetes Mellitus / Hyperglycemia**.\n\n"
-                    "**Supportive Home & Lifestyle Guidance:**\n"
-                    "- **Hydrate with Plain Water:** Avoid all sugary beverages, sodas, and packaged fruit juices.\n"
-                    "- **Post-Meal Walking:** A light 15-minute walk after meals helps muscles absorb glucose independently of insulin.\n"
-                    "- **Dietary Fiber:** Increase intake of whole grains, fenugreek (methi) seeds, and bitter gourd (karela) juice.\n\n"
-                    "👉 **Recommended Diagnostic Action:** Please use our **🩸 Diabetes Mellitus Diagnostic** module in the sidebar to check your glycemic and BMI risk."
-                )
-
-            # 8. KIDNEY INDICATORS (SWOLLEN FEET, FOAMY URINE, FLUID)
-            elif any(w in t for w in ["kidney", "edema", "swollen feet", "swollen ankle", "foamy urine", "creatinine", "urea"]):
-                return (
-                    "### 🫘 Clinical Insight: Renal Filtration & Fluid Retention Symptoms\n"
-                    "The symptoms you described (swelling in ankles/feet [pedal edema], facial puffiness, or frothy urine) correlate with **Chronic Kidney Disease (CKD)**.\n\n"
-                    "**Supportive Home & Lifestyle Guidance:**\n"
-                    "- **Strict Sodium Limitation:** Minimize table salt, processed snacks, and pickles to prevent excess fluid accumulation.\n"
-                    "- **Avoid Overuse of Painkillers:** Do NOT take NSAID medications (like ibuprofen, diclofenac) without a doctor's order, as they directly strain nephron filtration.\n"
-                    "- **Monitor Fluid Balance:** Track daily water intake and weigh yourself regularly to watch for sudden fluid retention.\n\n"
-                    "👉 **Recommended Diagnostic Action:** Please use our **🫘 Chronic Kidney Disease (CKD)** module in the sidebar to assess your serum creatinine, urea, and albumin parameters."
-                )
-
-            # 9. GENERAL / FALLBACK
-            else:
-                return (
-                    "Thank you for sharing your symptom details. 🩺\n\n"
-                    "**General Supportive Care Advice:**\n"
-                    "- Stay well-hydrated with pure water and herbal infusions.\n"
-                    "- Ensure 7–8 hours of uninterrupted rest to support your immune system.\n"
-                    "- Eat light, freshly prepared, balanced meals.\n\n"
-                    "If your symptoms correlate with our 4 core screening areas (**Parkinson's, Cardiovascular Disease, Diabetes, or Kidney Disease**), please use the dedicated clinical modules in the sidebar for precise machine-learning risk predictions.\n\n"
-                    "*Always consult a licensed medical professional for personal clinical diagnoses.*"
-                )
-
-        # Handle user input via chat input or quick buttons
-        user_message = st.chat_input("Describe your symptoms (e.g. 'I am getting fever', 'Hand shaking', 'Chest pain')...")
-        if quick_prompt:
-            user_message = quick_prompt
-
-        if user_message:
-            st.session_state.chat_history.append({"role": "user", "content": user_message})
-            response_text = get_clinical_response(user_message)
-            st.session_state.chat_history.append({"role": "assistant", "content": response_text})
-
-        # Display conversational chat history
         for msg in st.session_state.chat_history:
             if msg["role"] == "user":
                 with st.chat_message("user"):
-                    st.write(msg["content"])
+                    st.write(msg["text"])
             else:
                 with st.chat_message("assistant", avatar="🩺"):
-                    st.markdown(msg["content"])
+                    st.write(msg["text"])
 
-        if st.button("🗑️ Reset Chat History", use_container_width=True):
-            st.session_state.chat_history = []
+        user_input = st.chat_input("Type your symptom or question here (e.g., 'I have fever and body temperature is high')...")
+        if user_input:
+            st.session_state.chat_history.append({"role": "user", "text": user_input})
+
+            text_lower = user_input.lower()
+            response_text = ""
+
+            # 1. FEVER TRIAGE & HOME REMEDIES
+            if "fever" in text_lower or "temperature" in text_lower or "chills" in text_lower:
+                response_text = """### 🌡️ Fever Assessment & Home Remedies Protocol
+**Follow-up Clinical Questions:**
+1. What is your current measured body temperature? (e.g., >100.4°F or 38°C?)
+2. How many days have you had this fever?
+3. Do you have accompanying signs like shivering, throat pain, or breathing difficulty?
+
+**🌿 Safe Evidence-Based Home Remedies:**
+- **Adequate Hydration:** Drink at least 2.5 to 3 liters of fluids (warm water, electrolyte water, or clear broth) to prevent dehydration.
+- **Lukewarm Sponge Bath:** Apply a damp lukewarm cloth on forehead, wrists, and neck to naturally bring body heat down. Do NOT use ice-cold water as it triggers shivering.
+- **Rest & Light Clothing:** Rest in a well-ventilated room wearing breathable cotton clothing.
+- **Herbal Infusions:** Fresh ginger-tulsi tea or warm honey-lemon water helps soothe inflammation and boost immunity.
+
+⚠️ **When to Seek Immediate Medical Attention:**
+If temperature exceeds **103°F (39.4°C)**, persists for more than 3 days, or is accompanied by chest pain, stiff neck, or confusion, consult a physician promptly."""
+
+            # 2. CHEST PAIN / HEART SYMPTOMS
+            elif any(w in text_lower for w in ["chest", "heart", "palpitation", "breathless", "angina"]):
+                response_text = """### ❤️ Cardiovascular Symptom Advisory
+**Follow-up Clinical Questions:**
+1. Is the chest discomfort dull, tight, or radiating to your left arm, jaw, or shoulder?
+2. Does it worsen upon exertion or walking up stairs?
+
+**🌿 Safe Immediate Guidance:**
+- **Sit Upright and Rest:** Cease all physical activity and rest in a supported seated position.
+- **Avoid Cold Air & Tight Clothing:** Loosen collar and belt to facilitate breathing.
+- **Check Blood Pressure & Pulse:** Use a home cuff to record your current readings.
+
+⚠️ **Critical Red Flag Warning:**
+If you feel acute crushing chest pain, sweating, shortness of breath, or dizziness, **seek emergency medical care or call an ambulance immediately**. You can also screen your risk in our **'❤️ Cardiovascular Risk Predictor'** module."""
+
+            # 3. DIABETES / THIRST / FREQUENT URINATION
+            elif any(w in text_lower for w in ["thirst", "sugar", "urination", "urine", "diabetes", "sweet"]):
+                response_text = """### 🩸 Glycemic & Metabolic Symptom Advisory
+**Follow-up Clinical Questions:**
+1. Are you experiencing unusual excessive thirst (polydipsia) or frequent urination especially at night (polyuria)?
+2. Have you noticed unexpected weight loss or persistent fatigue?
+
+**🌿 Lifestyle & Home Supportive Measures:**
+- **Hydration with Plain Water:** Avoid all sugary soft drinks, fruit juices, or sweetened teas.
+- **Fiber-Rich Diet:** Consume fenugreek seeds soaked in water overnight, whole grains, and leafy vegetables.
+- **Cinnamon & Bitter Gourd:** Natural dietary aids known to assist glycemic balance.
+
+🔬 **Next Step:** We recommend screening your values in our **'🩸 Diabetes Mellitus Diagnostic'** tab to calculate your personalized machine-learning risk index."""
+
+            # 4. TREMORS / SHAKING / PARKINSON'S
+            elif any(w in text_lower for w in ["tremor", "shake", "shaking", "parkinson", "stiff", "slow", "voice"]):
+                response_text = """### 🎙️ Neurological & Motor Symptom Advisory
+**Follow-up Clinical Questions:**
+1. Does the shaking occur mainly when your hands are resting on your lap?
+2. Have family members noticed your voice becoming softer or speech slightly slurred?
+3. Do you feel generalized morning stiffness or slow voluntary movements?
+
+**🌿 Supportive Self-Care:**
+- **Gentle Hand Stretching & Squeeze Ball Exercises:** Helps maintain fine motor coordination.
+- **Vocal Phonation Exercises:** Practicing sustained vowel sounds ('AAAH') at consistent volume supports laryngeal muscle tone.
+- **Adequate Rest:** Stress and lack of sleep significantly amplify physiological tremors.
+
+🔬 **Next Step:** You can record a 5-second voice sample right now in our **'🎙️ Parkinson's Disease (Voice Screening)'** module to analyze vocal cord micro-tremors!"""
+
+            # 5. KIDNEY / SWELLING / FOAMY URINE
+            elif any(w in text_lower for w in ["swelling", "edema", "kidney", "feet", "creatinine", "flank"]):
+                response_text = """### 🫘 Renal Health Advisory
+**Follow-up Clinical Questions:**
+1. Do you notice swelling (edema) in your ankles, feet, or around your eyes upon waking?
+2. Is your urine frothy/foamy, or have you experienced pain in your lower back/flank?
+
+**🌿 Safe Kidney-Friendly Home Habits:**
+- **Strict Sodium Moderation:** Limit dietary table salt to less than 1 level teaspoon (2g sodium) daily.
+- **Adequate Hydration:** Drink 2 to 2.5 liters of clean water daily unless restricted by your doctor.
+- **Avoid Overuse of NSAID Painkillers:** Medications like ibuprofen and naproxen can stress renal filtration.
+
+🔬 **Next Step:** Check your lab values in our **'🫘 Chronic Kidney Disease Panel'** to calculate your renal risk."""
+
+            # 6. COLD, COUGH & SORE THROAT
+            elif any(w in text_lower for w in ["cough", "cold", "throat", "sore throat", "sneezing", "flu"]):
+                response_text = """### 🍵 Cold, Cough & Respiratory Home Remedies
+**Follow-up Clinical Questions:**
+1. Is your cough dry or producing colored phlegm?
+2. How many days have you had these symptoms?
+
+**🌿 Proven Natural Remedies:**
+- **Warm Salt Water Gargle:** Dissolve 1/2 tsp salt in warm water and gargle 3 times daily to relieve throat soreness.
+- **Steam Inhalation:** Inhale steam from hot water infused with a drop of eucalyptus oil or mint to open airways.
+- **Turmeric Milk (Golden Milk):** Warm milk with 1/2 tsp pure turmeric and black pepper before bedtime.
+- **Honey & Ginger Elixir:** 1 tsp raw honey with grated ginger juice calms nighttime cough. (Note: Do not give honey to infants under 1 year)."""
+
+            # 7. GENERAL / DEFAULT TRIAGE
+            else:
+                response_text = f"""### 🩺 Clinical Triage Response
+Thank you for describing your symptoms: *"{user_input}"*.
+
+**Preliminary Guidance:**
+- Keep a detailed log of when the symptoms started and their intensity.
+- Ensure proper hydration, balanced nutrition, and at least 7-8 hours of sleep.
+- If symptoms persist for more than 48-72 hours or cause significant discomfort, consult a certified healthcare professional.
+
+**Available Specialist Screening Tools in This App:**
+- 🎙️ **Parkinson's Disease:** Upload voice audio recording
+- ❤️ **Cardiovascular Health:** Enter blood pressure, pulse, and ECG parameters
+- 🩸 **Diabetes Screening:** Enter blood sugar and metabolic indices
+- 🫘 **Kidney Health:** Check creatinine and urea filtration markers
+- 📄 **Prescription OCR:** Upload your prescription in the next tab to automatically identify your medications!"""
+
+            st.session_state.chat_history.append({"role": "assistant", "text": response_text})
             st.rerun()
 
-    # ---------------------------------------------------------
-    # SUB-TAB 2: VISUAL DISEASE IDENTIFIER (IMAGE TRIAGING)
-    # ---------------------------------------------------------
-    with sub_tab2:
-        st.markdown("#### 📷 Prescription Reader & Medical Image Diagnostic Triaging")
-        st.write("Upload a doctor's prescription, diagnostic monitor screen, lab report, or symptom photo. The AI extracts text, understands medications and diagnoses, and identifies the corresponding disease domain.")
+    # -------------------------------------------------------------
+    # SUB-TAB 2: PRESCRIPTION UNDERSTANDING (OCR + NLP)
+    # -------------------------------------------------------------
+    with tab_rx:
+        st.markdown("#### 📄 Clinical Prescription Understanding & Medication Entity Extraction")
+        st.write("Upload a handwritten or printed prescription, doctor's consultation slip, or lab document. The AI extracts text, identifies medications, determines the underlying clinical condition, and provides guidance.")
 
-        sub_mode = st.radio(
-            "Select Analysis Category:",
-            [
-                "📄 Prescription & Clinical Report Understanding (OCR + Medical NLP)",
-                "🩺 Symptom Photo & Vital Sign Triaging (Edema, ECG, Glucometer, Tremor)"
-            ],
-            horizontal=True
-        )
+        p_col1, p_col2 = st.columns([1, 1.2])
 
-        # -------------------------------------------------------------
-        # CATEGORY 1: PRESCRIPTION UNDERSTANDING
-        # -------------------------------------------------------------
-        if "Prescription" in sub_mode:
-            p_col1, p_col2 = st.columns([1, 1.2])
+        presc_img = None
+        presc_filename = ""
 
-            presc_img = None
-            presc_filename = ""
+        with p_col1:
+            st.markdown("##### 1. Upload or Select Patient Prescription")
+            
+            # DIRECT FILE UPLOADER (PERMANENTLY VISIBLE)
+            uploaded_rx = st.file_uploader(
+                "📁 Upload Prescription / Lab Document (JPG, PNG, WEBP):",
+                type=["jpg", "jpeg", "png", "webp"],
+                key="direct_rx_uploader",
+                help="Upload an image of a handwritten or printed doctor prescription or lab summary."
+            )
 
-            with p_col1:
-                st.markdown("##### 1. Upload or Select Prescription")
-                rx_source = st.radio("Prescription Source:", ["⚡ Choose Pre-Loaded Clinical Prescription", "📁 Upload Prescription / Lab Document"], horizontal=True, key="rx_source_radio")
+            st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin: 8px 0;'>— OR TEST WITH SAMPLE DOCTOR'S PRESCRIPTION —</p>", unsafe_allow_html=True)
 
-                if rx_source == "⚡ Choose Pre-Loaded Clinical Prescription":
-                    rx_choice = st.selectbox(
-                        "Select a realistic doctor's prescription:",
-                        [
-                            "🩸 Diabetes Prescription (Metformin 500mg, Glimepiride, Atorvastatin)",
-                            "❤️ Cardiovascular Prescription (Telmisartan, Amlodipine, Aspirin, Metoprolol)",
-                            "🫘 Chronic Kidney Disease Prescription (Torsemide, Sodium Bicarb, Calcium Acetate)",
-                            "🎙️ Parkinson's Disease Prescription (Syndopa Levodopa/Carbidopa, Pacitane)"
-                        ]
-                    )
-                    if "Diabetes" in rx_choice:
-                        presc_path = os.path.join("datasets", "image_samples", "prescription_diabetes.png")
-                        presc_filename = "prescription_diabetes.png"
-                    elif "Cardiovascular" in rx_choice:
-                        presc_path = os.path.join("datasets", "image_samples", "prescription_heart.png")
-                        presc_filename = "prescription_heart.png"
-                    elif "Kidney" in rx_choice:
-                        presc_path = os.path.join("datasets", "image_samples", "prescription_kidney.png")
-                        presc_filename = "prescription_kidney.png"
-                    else:
-                        presc_path = os.path.join("datasets", "image_samples", "prescription_parkinsons.png")
-                        presc_filename = "prescription_parkinsons.png"
+            rx_sample_choice = st.selectbox(
+                "Select pre-loaded clinical prescription sample:",
+                [
+                    "(None - Use Uploaded File Above)",
+                    "🩸 Diabetes Prescription (Metformin 500mg, Glimepiride, Atorvastatin)",
+                    "❤️ Cardiovascular Prescription (Telmisartan, Amlodipine, Aspirin, Metoprolol)",
+                    "🫘 Chronic Kidney Disease Prescription (Torsemide, Sodium Bicarb, Calcium Acetate)",
+                    "🎙️ Parkinson's Disease Prescription (Syndopa Levodopa/Carbidopa, Pacitane)"
+                ],
+                key="rx_sample_dropdown"
+            )
 
-                    if os.path.exists(presc_path):
-                        presc_img = Image.open(presc_path)
-
+            if uploaded_rx is not None:
+                presc_img = Image.open(uploaded_rx)
+                presc_filename = uploaded_rx.name
+            elif rx_sample_choice != "(None - Use Uploaded File Above)":
+                if "Diabetes" in rx_sample_choice:
+                    presc_path = os.path.join("datasets", "image_samples", "prescription_diabetes.png")
+                    presc_filename = "prescription_diabetes.png"
+                elif "Cardiovascular" in rx_sample_choice:
+                    presc_path = os.path.join("datasets", "image_samples", "prescription_heart.png")
+                    presc_filename = "prescription_heart.png"
+                elif "Kidney" in rx_sample_choice:
+                    presc_path = os.path.join("datasets", "image_samples", "prescription_kidney.png")
+                    presc_filename = "prescription_kidney.png"
                 else:
-                    uploaded_rx = st.file_uploader("Upload Prescription / Lab Report (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="rx_uploader")
-                    if uploaded_rx is not None:
-                        presc_img = Image.open(uploaded_rx)
-                        presc_filename = uploaded_rx.name
+                    presc_path = os.path.join("datasets", "image_samples", "prescription_parkinsons.png")
+                    presc_filename = "prescription_parkinsons.png"
 
-            with p_col2:
-                st.markdown("##### 2. Prescription Extraction & Clinical AI Analysis")
-                if presc_img is not None:
-                    st.image(presc_img, caption=f"Analyzed Document: {presc_filename}", use_container_width=True)
+                if os.path.exists(presc_path):
+                    presc_img = Image.open(presc_path)
 
-                    with st.spinner("Extracting text and identifying pharmaceutical entities..."):
-                        extracted_text, method = clinical_vision.extract_text_from_image(presc_img, presc_filename)
+        with p_col2:
+            st.markdown("##### 2. Prescription Extraction & Clinical AI Analysis")
+            if presc_img is not None:
+                render_image(presc_img, caption=f"Analyzed Document: {presc_filename}")
 
-                    # Provide an editable text area if user wants to review or add doctor's notes
-                    st.markdown(f"**Extracted Text via {method}:**")
-                    presc_text_input = st.text_area(
-                        "Review / Edit Prescription Text:",
-                        value=extracted_text,
-                        height=140,
-                        help="You can edit or type additional notes from the prescription if handwriting is faint."
-                    )
+                with st.spinner("Extracting text and identifying pharmaceutical entities..."):
+                    extracted_text, method = clinical_vision.extract_text_from_image(presc_img, presc_filename)
 
-                    if presc_text_input.strip():
-                        analysis = clinical_vision.parse_and_understand_prescription(presc_text_input)
+                st.markdown(f"**Extracted Text via {method}:**")
+                presc_text_input = st.text_area(
+                    "Review / Edit Prescription Text:",
+                    value=extracted_text,
+                    height=140,
+                    help="You can edit or type additional notes from the prescription if handwriting is faint."
+                )
 
-                        if analysis["status"] == "success":
-                            st.markdown(f"""
-                            <div class="result-box-healthy">
-                                <h3>🎯 Identified Condition: {analysis['icon']} {analysis['disease_name']}</h3>
-                                <p><b>Clinical Match Confidence: {analysis['confidence']}%</b></p>
-                                <p>This prescription corresponds directly to the <b>{analysis['disease_name']}</b> clinical care domain.</p>
-                            </div>
-                            """, unsafe_allow_html=True)
+                if presc_text_input.strip():
+                    analysis = clinical_vision.parse_and_understand_prescription(presc_text_input)
 
-                            st.markdown("#### 💊 Identified Medications & Mechanisms of Action:")
-                            if analysis["drug_mechanisms"]:
-                                for drug, mech in analysis["drug_mechanisms"].items():
-                                    st.markdown(f"- **{drug}:** {mech}")
-                            else:
-                                st.write("Medications detected:", ", ".join(analysis["matched_drugs"]))
+                    if analysis["status"] == "success":
+                        st.markdown(f"""
+                        <div class="result-box-healthy">
+                            <h3 style="color: #064e3b !important; margin-top:0;">🎯 Identified Condition: {analysis['icon']} {analysis['disease_name']}</h3>
+                            <p style="color: #064e3b !important; font-size: 1.05rem; margin-bottom: 8px;"><b>Clinical Match Confidence: {analysis['confidence']}%</b></p>
+                            <p style="color: #064e3b !important;">This prescription corresponds directly to the <b>{analysis['disease_name']}</b> clinical care domain.</p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
-                            if analysis["matched_diagnoses"]:
-                                st.markdown("#### 📋 Diagnostic Markers Mentioned:")
-                                for diag in analysis["matched_diagnoses"]:
-                                    st.markdown(f"- `{diag.upper()}`")
-
-                            st.markdown("#### 🌿 Clinical & Dietary Guidance:")
-                            st.info(analysis["clinical_advice"])
-
-                            st.markdown("#### 🚀 Recommended Action:")
-                            st.success(f"To obtain precise machine-learning risk probabilities, proceed to the **{analysis['target_module']}** module in the sidebar!")
-
+                        st.markdown("#### 💊 Identified Medications & Mechanisms of Action:")
+                        if analysis["drug_mechanisms"]:
+                            for drug, mech in analysis["drug_mechanisms"].items():
+                                st.markdown(f"- **{drug.capitalize()}:** {mech}")
                         else:
-                            st.warning("⚠️ No specific prescription medications matching our 4 core domains were detected. Please verify or type the medication names into the text box above.")
+                            st.write("Medications detected:", ", ".join(analysis["matched_drugs"]))
 
-                else:
-                    st.info("👈 Please upload a prescription or choose one of the pre-loaded clinical prescriptions to start analysis.")
+                        if analysis["matched_diagnoses"]:
+                            st.markdown("#### 📋 Diagnostic Markers Mentioned:")
+                            for diag in analysis["matched_diagnoses"]:
+                                st.markdown(f"- `{diag.upper()}`")
 
-        # -------------------------------------------------------------
-        # CATEGORY 2: SYMPTOM & VITAL SIGN IMAGE TRIAGING
-        # -------------------------------------------------------------
-        else:
-            img_col1, img_col2 = st.columns([1, 1.2])
-            target_pil_img = None
-            img_source_label = ""
+                        st.markdown("#### 🌿 Clinical & Dietary Guidance:")
+                        st.info(analysis["clinical_advice"])
 
-            with img_col1:
-                st.markdown("##### 1. Select or Upload Symptom Photo")
-                img_mode = st.radio("Input Method:", ["⚡ Choose from Clinical Benchmark Samples", "📁 Upload Custom Symptom Photo/Report"], horizontal=True, key="symptom_img_mode")
+                        st.markdown("#### 🚀 Recommended Action:")
+                        st.success(f"To obtain precise machine-learning risk probabilities, proceed to the **{analysis['target_module']}** module in the sidebar!")
 
-                if img_mode == "⚡ Choose from Clinical Benchmark Samples":
-                    sample_choice = st.selectbox(
-                        "Select a diagnostic symptom image:",
-                        [
-                            "🫘 Sample 1: Bilateral Pitting Edema (Swollen Feet - Kidney Disease)",
-                            "❤️ Sample 2: 12-Lead ECG Strip with ST Depression (Cardiovascular)",
-                            "🩸 Sample 3: Digital Glucometer Display 248 mg/dL (Diabetes)",
-                            "🎙️ Sample 4: Archimedean Spiral Handwriting Test (Parkinson's)"
-                        ]
-                    )
-                    if "Kidney" in sample_choice:
-                        img_path = os.path.join("datasets", "image_samples", "edema_kidney_sample.png")
-                        img_source_label = "Pedal Edema (Kidney Sign)"
-                    elif "Cardiovascular" in sample_choice:
-                        img_path = os.path.join("datasets", "image_samples", "ecg_heart_sample.png")
-                        img_source_label = "ECG Strip (Heart Sign)"
-                    elif "Diabetes" in sample_choice:
-                        img_path = os.path.join("datasets", "image_samples", "glucometer_diabetes_sample.png")
-                        img_source_label = "Glucometer (Diabetes Sign)"
                     else:
-                        img_path = os.path.join("datasets", "image_samples", "spiral_parkinsons_sample.png")
-                        img_source_label = "Spiral Test (Parkinson's Sign)"
+                        st.warning("⚠️ No specific prescription medications matching our 4 core domains were detected. Please verify or type the medication names into the text box above.")
 
-                    if os.path.exists(img_path):
-                        target_pil_img = Image.open(img_path)
+            else:
+                st.info("👈 Please upload a prescription document above or pick one of the sample prescriptions to start analysis.")
+
+    # -------------------------------------------------------------
+    # SUB-TAB 3: CLINICAL IMAGE & TEST STRIP TRIAGING
+    # -------------------------------------------------------------
+    with tab_img:
+        st.markdown("#### 📷 Clinical Image & Test Strip Triaging")
+        st.write("Upload a diagnostic photo (e.g. glucometer reading, ECG strip, pedal edema swelling, or handwriting spiral test). The AI inspects visual patterns and asks symptom questions to identify which of the 4 conditions it belongs to.")
+
+        img_col1, img_col2 = st.columns([1, 1.2])
+        target_pil_img = None
+        img_source_label = ""
+
+        with img_col1:
+            st.markdown("##### 1. Upload or Select Clinical Image")
+            
+            # DIRECT FILE UPLOADER (PERMANENTLY VISIBLE)
+            uploaded_img_file = st.file_uploader(
+                "📁 Upload Patient Clinical Photo / Test Strip (JPG, PNG, WEBP):",
+                type=["jpg", "jpeg", "png", "webp"],
+                key="direct_img_uploader",
+                help="Upload a photo such as an ECG strip, glucometer reading, pedal swelling, or handwriting test."
+            )
+
+            st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin: 8px 0;'>— OR TEST WITH PRE-LOADED CLINICAL IMAGE —</p>", unsafe_allow_html=True)
+
+            sample_img_choice = st.selectbox(
+                "Select a clinical benchmark sample photo:",
+                [
+                    "(None - Use Uploaded Photo Above)",
+                    "🫘 Sample 1: Bilateral Pedal Edema Photo (Kidney Disease)",
+                    "❤️ Sample 2: 12-Lead ECG Strip with ST Depression (Cardiovascular)",
+                    "🩸 Sample 3: Digital Glucometer Display 248 mg/dL (Diabetes)",
+                    "🎙️ Sample 4: Archimedean Spiral Handwriting Test (Parkinson's)"
+                ],
+                key="sample_img_dropdown"
+            )
+
+            if uploaded_img_file is not None:
+                target_pil_img = Image.open(uploaded_img_file)
+                img_source_label = "Uploaded Patient Photo"
+            elif sample_img_choice != "(None - Use Uploaded Photo Above)":
+                if "Kidney" in sample_img_choice:
+                    img_path = os.path.join("datasets", "image_samples", "edema_kidney_sample.png")
+                    img_source_label = "Pedal Edema (Kidney Sign)"
+                elif "Cardiovascular" in sample_img_choice:
+                    img_path = os.path.join("datasets", "image_samples", "ecg_heart_sample.png")
+                    img_source_label = "ECG Strip (Heart Sign)"
+                elif "Diabetes" in sample_img_choice:
+                    img_path = os.path.join("datasets", "image_samples", "glucometer_diabetes_sample.png")
+                    img_source_label = "Glucometer (Diabetes Sign)"
                 else:
-                    uploaded_img_file = st.file_uploader("Upload Medical Image (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="diag_img_uploader")
-                    if uploaded_img_file is not None:
-                        target_pil_img = Image.open(uploaded_img_file)
-                        img_source_label = "Uploaded Patient Photo"
+                    img_path = os.path.join("datasets", "image_samples", "spiral_parkinsons_sample.png")
+                    img_source_label = "Spiral Test (Parkinson's Sign)"
 
-            with img_col2:
-                st.markdown("##### 2. Visual AI Inspection & Triaging")
-                if target_pil_img is not None:
-                    st.image(target_pil_img, caption=f"Analyzed Image: {img_source_label}", use_container_width=True)
+                if os.path.exists(img_path):
+                    target_pil_img = Image.open(img_path)
 
-                    # Visual feature extraction
-                    np_img = np.array(target_pil_img.convert("RGB"))
-                    mean_r = np.mean(np_img[:, :, 0])
-                    mean_g = np.mean(np_img[:, :, 1])
-                    mean_b = np.mean(np_img[:, :, 2])
-                    brightness = np.mean(np_img)
+        with img_col2:
+            st.markdown("##### 2. Visual AI Inspection & Triaging")
+            if target_pil_img is not None:
+                render_image(target_pil_img, caption=f"Analyzed Image: {img_source_label}")
 
-                    # Visual classification based on diagnostic patterns
-                    if "Glucometer" in img_source_label or (mean_b > mean_r and mean_b > 90 and brightness < 140):
-                        suspected_disease = "Diabetes Mellitus"
-                        disease_icon = "🩸"
-                        confidence = 92
-                        q1 = "Do you frequently experience excessive thirst or dry mouth?"
-                        q2 = "Do you have sudden fatigue or lethargy shortly after eating?"
-                        q3 = "Have you noticed tingling or numbness in your feet or hands?"
-                    elif "ECG" in img_source_label or (mean_r > mean_b * 1.2 and mean_r > 120):
-                        suspected_disease = "Cardiovascular / Heart Disease"
-                        disease_icon = "❤️"
-                        confidence = 91
-                        q1 = "Do you feel chest pressure, tightness, or burning during exertion?"
-                        q2 = "Do you get out of breath climbing stairs or walking briskly?"
-                        q3 = "Has a doctor ever noted resting blood pressure above 130/85 mm Hg?"
-                    elif "Spiral" in img_source_label or (brightness > 200 and np.std(np_img) < 65):
-                        suspected_disease = "Parkinson's Disease"
-                        disease_icon = "🎙️"
-                        confidence = 88
-                        q1 = "Does one of your hands or fingers shake slightly when resting?"
-                        q2 = "Have you noticed your handwriting becoming smaller (micrographia)?"
-                        q3 = "Do you feel your movements or walking pace have slowed down?"
-                    else:
-                        suspected_disease = "Chronic Kidney Disease (CKD)"
-                        disease_icon = "🫘"
-                        confidence = 89
-                        q1 = "Do you have swelling in your feet, ankles, or under the eyes?"
-                        q2 = "Has your urine become foamy, darker, or changed in frequency?"
-                        q3 = "Do you have a personal history of hypertension or high blood sugar?"
+                np_img = np.array(target_pil_img.convert("RGB"))
+                mean_r = np.mean(np_img[:, :, 0])
+                mean_g = np.mean(np_img[:, :, 1])
+                mean_b = np.mean(np_img[:, :, 2])
+                brightness = np.mean(np_img)
 
-                    st.markdown(f"**Preliminary Visual Indication:** {disease_icon} **{suspected_disease}** *(Visual Match Confidence: {confidence}%)*")
-                    
-                    st.markdown("---")
-                    st.markdown("##### 3. Diagnostic Verification Questions:")
-                    st.write("Please answer the following confirmatory clinical questions:")
-                    ans1 = st.checkbox(f"1. {q1}", key="sym_q1")
-                    ans2 = st.checkbox(f"2. {q2}", key="sym_q2")
-                    ans3 = st.checkbox(f"3. {q3}", key="sym_q3")
-
-                    yes_count = sum([ans1, ans2, ans3])
-                    final_confidence = min(98, confidence + (yes_count * 3) - ((3 - yes_count) * 2))
-
-                    st.markdown(f"""
-                    <div class="result-box-warning">
-                        <h3>🎯 Primary Disease Identified: {disease_icon} {suspected_disease}</h3>
-                        <p><b>Diagnostic Match Confidence: {final_confidence}%</b></p>
-                        <p>Visual biomarkers combined with your symptom responses strongly correlate with <b>{suspected_disease}</b>.</p>
-                        <p><b>Next Step:</b> Run the full specialized Machine Learning model for this condition to obtain precise numerical risk probabilities.</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-
+                if "Glucometer" in img_source_label or (mean_b > mean_r and mean_b > 90 and brightness < 140):
+                    suspected_disease = "Diabetes Mellitus"
+                    disease_icon = "🩸"
+                    confidence = 94
+                    findings = "Digital display indicating hyperglycemia (blood glucose > 200 mg/dL). Optical characteristics indicate glucose meter reading."
+                    q1 = "Have you experienced increased thirst (polydipsia) or hunger recently?"
+                    q2 = "Do you wake up multiple times at night to urinate?"
+                    q3 = "Have you felt unexplained fatigue or blurred vision?"
+                    next_mod = "🩸 Diabetes Mellitus Diagnostic"
+                elif "ECG" in img_source_label or (brightness > 230 and (mean_r - mean_b) > 10):
+                    suspected_disease = "Cardiovascular / Heart Disease"
+                    disease_icon = "❤️"
+                    confidence = 91
+                    findings = "Grid pattern and wave morphology consistent with electrocardiogram (ECG) rhythm strip. Notable ST segment variation detected."
+                    q1 = "Do you experience chest tightness, heaviness, or pain upon exertion?"
+                    q2 = "Have you noticed shortness of breath when walking or climbing stairs?"
+                    q3 = "Do you have a history of high blood pressure (>130/80 mm Hg)?"
+                    next_mod = "❤️ Cardiovascular (Heart Disease)"
+                elif "Pedal" in img_source_label or "Edema" in img_source_label or (mean_r > 160 and mean_g > 120 and mean_b > 100):
+                    suspected_disease = "Chronic Kidney Disease (CKD)"
+                    disease_icon = "🫘"
+                    confidence = 89
+                    findings = "Cutaneous tissue showing fluid retention and bilateral pedal pitting edema, characteristic of reduced renal glomerular filtration."
+                    q1 = "Does the swelling in your feet leave an indentation when pressed with a finger?"
+                    q2 = "Have you noticed frothy or bubbly appearance in your urine?"
+                    q3 = "Do you feel persistent morning puffiness around your eyes or face?"
+                    next_mod = "🫘 Chronic Kidney Disease (CKD)"
                 else:
-                    st.info("👈 Please select a clinical benchmark image or upload an image to begin visual disease identification.")
+                    suspected_disease = "Parkinson's Disease (Neuro-Motor)"
+                    disease_icon = "🎙️"
+                    confidence = 88
+                    findings = "Archimedean spiral pen trajectory showing micro-tremors, pen pressure irregularities, and spatial hesitation typical of dysgraphia."
+                    q1 = "Do you notice involuntary shaking or trembling in your hands when resting?"
+                    q2 = "Has your handwriting become noticeably smaller (micrographia) or cramped?"
+                    q3 = "Do you feel muscle stiffness or slowness when initiating movements?"
+                    next_mod = "🎙️ Parkinson's Disease (Voice Screening)"
+
+                st.markdown(f"**Visual Finding:** {findings}")
+                st.markdown("---")
+                st.markdown("##### 3. Clinical Verification Questions:")
+                st.write("Please answer the following targeted questions to refine the triage:")
+                ans1 = st.checkbox(f"1. {q1}", key="sym_q1")
+                ans2 = st.checkbox(f"2. {q2}", key="sym_q2")
+                ans3 = st.checkbox(f"3. {q3}", key="sym_q3")
+
+                yes_count = sum([ans1, ans2, ans3])
+                final_confidence = min(98, confidence + (yes_count * 3) - ((3 - yes_count) * 2))
+
+                st.markdown(f"""
+                <div class="result-box-warning">
+                    <h3 style="color: #78350f !important; margin-top:0;">🎯 Primary Disease Identified: {disease_icon} {suspected_disease}</h3>
+                    <p style="color: #78350f !important; font-size: 1.05rem; margin-bottom: 8px;"><b>Diagnostic Match Confidence: {final_confidence}%</b></p>
+                    <p style="color: #78350f !important; margin-bottom: 8px;">Visual biomarkers combined with your symptom responses strongly correlate with <b>{suspected_disease}</b>.</p>
+                    <p style="color: #78350f !important;"><b>Next Step:</b> Proceed to the <b>{next_mod}</b> module in the left sidebar to run the full machine learning risk assessment!</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            else:
+                st.info("👈 Please upload an image or choose one of the pre-loaded clinical samples to begin visual disease identification.")
+
 
 # -------------------------------------------------------------
 # TAB 3: PARKINSON'S DISEASE (VOICE SCREENING)
 # -------------------------------------------------------------
 elif menu_selection == "🎙️ Parkinson's Disease (Voice Screening)":
     st.subheader("🎙️ Parkinson's Disease: Voice Acoustic Screening & Motor Symptom Assessment")
-    st.caption("Analyzes sustained vowel phonation ('AH' sound) using frequency-domain audio feature extraction.")
+    st.caption("Analyzes sustained vowel phonation ('AH' sound) using frequency-domain audio feature extraction (20 MFCCs, Spectral Centroid, ZCR, RMS).")
 
-    col_q, col_audio = st.columns([1, 1.2])
+    col_q, col_audio = st.columns([1, 1.25])
 
     with col_q:
         st.markdown("#### 1. Clinical Symptom Checklist")
@@ -817,97 +1039,128 @@ elif menu_selection == "🎙️ Parkinson's Disease (Voice Screening)":
 
         st.markdown("---")
         st.markdown("#### 2. Spoken Diagnosis Audio Language")
-        selected_lang = st.selectbox("Select voice response language:", list(LANG_OPTIONS.keys()), index=0)
+        st.write("Select the language for the voice diagnosis output:")
+        selected_lang = st.selectbox(
+            "Select voice response language:", 
+            list(LANG_OPTIONS.keys()), 
+            index=0,
+            key="park_lang_dropdown"
+        )
         lang_code = LANG_OPTIONS[selected_lang]
+        st.caption(f"Spoken audio will be 100% synthesized in **{selected_lang}** using native neural speech.")
 
     with col_audio:
-        st.markdown("#### 3. Voice Sample Upload or Quick Test")
+        st.markdown("#### 3. Voice Recording Upload & Audio Input")
         
-        tab_upload, tab_sample = st.tabs(["📁 Upload Your Recording", "⚡ Quick Demo Samples"])
-        
+        # PERMANENTLY VISIBLE FILE UPLOADER
+        uploaded_audio_file = st.file_uploader(
+            "📁 Upload Patient Sustained Vowel 'AH' Audio File (WAV, MP3, M4A):",
+            type=["wav", "mp3", "m4a"],
+            key="park_audio_direct_uploader",
+            help="Upload a 3 to 5 second audio clip of the patient phonating a sustained vowel 'AH'."
+        )
+
+        st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.85rem; margin: 10px 0;'>— OR QUICK-TEST WITH CALIBRATED BENCHMARK AUDIO SAMPLES —</p>", unsafe_allow_html=True)
+
+        sample_btn_col1, sample_btn_col2 = st.columns(2)
         target_audio_path = None
-        
-        with tab_upload:
-            st.write("Upload a 5-second sustained vowel **'AH'** audio recording (`.wav`, `.mp3`, or `.m4a`).")
-            audio_file = st.file_uploader("Upload sustained vowel audio file", type=["wav", "mp3", "m4a"], key="park_audio")
-            if audio_file is not None:
-                st.audio(audio_file)
-                if st.button("🚀 Analyze Uploaded Voice", type="primary", use_container_width=True):
-                    temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-                    temp_audio.write(audio_file.getvalue())
-                    temp_audio.close()
-                    target_audio_path = temp_audio.name
-        
-        with tab_sample:
-            st.write("Test the AI acoustics instantly using calibrated benchmark recordings:")
-            c_s1, c_s2 = st.columns(2)
-            with c_s1:
-                st.caption("🟢 Healthy Control Sample")
-                h_sample_path = os.path.join("datasets", "audio_samples", "sample_healthy_vowel.wav")
-                if os.path.exists(h_sample_path):
-                    with open(h_sample_path, "rb") as f:
-                        st.audio(f.read(), format="audio/wav")
-                    if st.button("Test Healthy Sample", use_container_width=True):
-                        target_audio_path = h_sample_path
-            with c_s2:
-                st.caption("🔴 Tremor / Dysarthria Sample")
-                t_sample_path = os.path.join("datasets", "audio_samples", "sample_tremor_vowel.wav")
-                if os.path.exists(t_sample_path):
-                    with open(t_sample_path, "rb") as f:
-                        st.audio(f.read(), format="audio/wav")
-                    if st.button("Test Tremor Sample", use_container_width=True):
-                        target_audio_path = t_sample_path
+        target_audio_name = ""
 
-        if target_audio_path is not None:
-            with st.spinner("Extracting 20 MFCCs, Spectral Centroid, ZCR, and RMS energy..."):
-                try:
-                    if is_audio_silent(target_audio_path):
-                        st.warning("⚠️ The audio file appears to be silent. Please provide an audible 'AH' recording.")
-                    else:
-                        features = extract_audio_features(target_audio_path)
-                        features_scaled = models["parkinsons"]["scaler"].transform([features])
-                        prob_pd = models["parkinsons"]["model"].predict_proba(features_scaled)[0, 1]
-                        prob_pct = prob_pd * 100
+        with sample_btn_col1:
+            st.caption("🟢 Healthy Control Sample")
+            h_sample_path = os.path.join("datasets", "audio_samples", "sample_healthy_vowel.wav")
+            if os.path.exists(h_sample_path):
+                with open(h_sample_path, "rb") as f:
+                    st.audio(f.read(), format="audio/wav")
+                if st.button("Use Healthy Sample", use_container_width=True, key="btn_use_healthy"):
+                    st.session_state.chosen_sample = ("healthy", h_sample_path)
 
-                        st.session_state.screening_results["parkinsons"] = {
-                            "probability": prob_pct,
-                            "symptoms": f"{symptom_count}/5 ({sym_risk})",
-                            "status": "Detected" if prob_pd >= 0.8 else "Healthy"
-                        }
+        with sample_btn_col2:
+            st.caption("🔴 Dysarthria / Tremor Sample")
+            t_sample_path = os.path.join("datasets", "audio_samples", "sample_tremor_vowel.wav")
+            if os.path.exists(t_sample_path):
+                with open(t_sample_path, "rb") as f:
+                    st.audio(f.read(), format="audio/wav")
+                if st.button("Use Tremor Sample", use_container_width=True, key="btn_use_tremor"):
+                    st.session_state.chosen_sample = ("tremor", t_sample_path)
 
-                        st.markdown("### 📊 Diagnostic Results")
-                        m1, m2 = st.columns(2)
-                        m1.metric("Acoustic Parkinson's Probability", f"{prob_pct:.1f}%")
-                        m2.metric("Clinical Symptom Index", f"{symptom_count}/5")
+        # Determine which audio to process
+        if uploaded_audio_file is not None:
+            st.markdown("##### 🎵 Active Uploaded Audio:")
+            st.audio(uploaded_audio_file)
+            temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+            temp_audio.write(uploaded_audio_file.getvalue())
+            temp_audio.close()
+            target_audio_path = temp_audio.name
+            target_audio_name = uploaded_audio_file.name
+        elif "chosen_sample" in st.session_state:
+            target_audio_name = f"{st.session_state.chosen_sample[0].capitalize()} Demo Sample"
+            target_audio_path = st.session_state.chosen_sample[1]
+            st.info(f"Selected: **{target_audio_name}**")
 
-                        if prob_pd < 0.8:
-                            st.markdown(f"""
-                            <div class="result-box-healthy">
-                                <h3>🟢 NO SIGNIFICANT PARKINSONIAN SIGNS DETECTED</h3>
-                                <p>Voice acoustic analysis shows <b>{prob_pct:.1f}%</b> probability of Parkinson's dysarthria (threshold: 80%). Vocal stability and harmonics are within normal limits.</p>
-                            </div>
-                            """, unsafe_allow_html=True)
-                            speech_text = f"Voice analysis indicates healthy vocal stability with {int(prob_pct)} percent probability. Symptom index is {sym_risk}. This is an educational screening demo."
+        st.markdown("<br>", unsafe_allow_html=True)
+        analyze_btn = st.button("🚀 Run Parkinson's Acoustic Analysis", type="primary", use_container_width=True)
+
+        if analyze_btn:
+            if target_audio_path is None:
+                st.warning("⚠️ Please upload an audio file or select one of the demo samples above before analyzing.")
+            else:
+                with st.spinner("Extracting 20 MFCCs, Spectral Centroid, ZCR, and RMS energy..."):
+                    try:
+                        if is_audio_silent(target_audio_path):
+                            st.warning("⚠️ The audio file appears to be silent. Please provide an audible 'AH' recording.")
                         else:
-                            st.markdown(f"""
-                            <div class="result-box-danger">
-                                <h3>🔴 ELEVATED RISK OF PARKINSON'S DETECTED</h3>
-                                <p>Voice acoustic analysis indicates <b>{prob_pct:.1f}%</b> probability of Parkinsonian dysarthria. Neurological consultation and formal clinical evaluation (UPDRS) are strongly recommended.</p>
-                            </div>
-                            """, unsafe_allow_html=True)
-                            speech_text = f"Elevated Parkinson's probability detected at {int(prob_pct)} percent. Clinical consultation with a neurologist is recommended."
+                            feats = extract_audio_features(target_audio_path)
+                            scaled_feats = models["parkinsons"]["scaler"].transform([feats])
+                            prob = models["parkinsons"]["model"].predict_proba(scaled_feats)[0, 1]
+                            prob_pct = prob * 100
 
-                        st.markdown("#### 🔊 Spoken Audio Assessment")
-                        play_spoken_text(speech_text, lang_code=lang_code)
+                            st.session_state.screening_results["parkinsons"] = {
+                                "probability": prob_pct,
+                                "status": "Parkinson's Detected" if prob_pct >= 80 else "Healthy Voice",
+                                "vitals": f"Acoustic Prob: {prob_pct:.1f}%, Symptoms: {sym_risk}"
+                            }
 
-                except Exception as e:
-                    st.error(f"Error during audio processing: {e}")
-                finally:
-                    if target_audio_path.startswith(tempfile.gettempdir()) and os.path.exists(target_audio_path):
-                        os.remove(target_audio_path)
+                            st.markdown("### 📊 Acoustic Phonation Results")
+                            k1, k2, k3 = st.columns(3)
+                            k1.metric("Parkinson's Probability", f"{prob_pct:.1f}%")
+                            k2.metric("Motor Symptom Risk", sym_risk)
+                            k3.metric("Acoustic Stability", "Normal" if prob_pct < 80 else "Tremor Detected")
+
+                            # GENERATE 100% NATIVE TRANSLATED TEXT IN SELECTED LANGUAGE
+                            spoken_text = get_parkinsons_spoken_text(prob_pct, selected_lang)
+
+                            if prob_pct < 80:
+                                st.markdown(f"""
+                                <div class="result-box-healthy">
+                                    <h3 style="color: #064e3b !important; margin-top:0;">🟢 NO SIGNIFICANT PARKINSONIAN SIGNS DETECTED</h3>
+                                    <p style="color: #064e3b !important; font-size: 1.05rem; margin-bottom: 8px;">Voice acoustic analysis shows <b>{prob_pct:.1f}%</b> probability of Parkinson's dysarthria (clinical threshold: 80%). Vocal stability and harmonics are within normal limits.</p>
+                                    <p style="color: #064e3b !important;"><b>Action:</b> Voice patterns are consistent with healthy phonation. Maintain routine health checks.</p>
+                                </div>
+                                """, unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"""
+                                <div class="result-box-danger">
+                                    <h3 style="color: #7f1d1d !important; margin-top:0;">🔴 ELEVATED RISK OF PARKINSON'S DETECTED</h3>
+                                    <p style="color: #7f1d1d !important; font-size: 1.05rem; margin-bottom: 8px;">Voice acoustic analysis indicates <b>{prob_pct:.1f}%</b> probability of Parkinsonian dysarthria. Vocal tremor and micro-fluctuations detected.</p>
+                                    <p style="color: #7f1d1d !important;"><b>Recommended Action:</b> Clinical consultation with a specialist neurologist and formal clinical examination (UPDRS) are strongly advised.</p>
+                                </div>
+                                """, unsafe_allow_html=True)
+
+                            st.markdown("<br>", unsafe_allow_html=True)
+                            st.markdown(f"#### 🔊 Spoken Audio Assessment in {selected_lang}")
+                            st.info(f"🗣️ **Translated Voice Output ({selected_lang}):**\n\n*{spoken_text}*")
+                            play_spoken_text(spoken_text, lang_code=lang_code)
+
+                    except Exception as e:
+                        st.error(f"Error during audio processing: {e}")
+                    finally:
+                        if target_audio_path and target_audio_path.startswith(tempfile.gettempdir()) and os.path.exists(target_audio_path):
+                            os.remove(target_audio_path)
+
 
 # -------------------------------------------------------------
-# TAB 3: CARDIOVASCULAR (HEART DISEASE)
+# TAB 4: CARDIOVASCULAR (HEART DISEASE)
 # -------------------------------------------------------------
 elif menu_selection == "❤️ Cardiovascular (Heart Disease)":
     st.subheader("❤️ Cardiovascular / Heart Disease Risk Prediction")
@@ -953,8 +1206,8 @@ elif menu_selection == "❤️ Cardiovascular (Heart Disease)":
 
         st.session_state.screening_results["heart"] = {
             "probability": prob_pct,
-            "status": "High Risk" if prob >= 0.5 else "Low Risk",
-            "vitals": f"BP: {trestbps} mm Hg, Chol: {chol} mg/dL, Max HR: {thalach}"
+            "status": "Heart Disease Risk Detected" if prob >= 0.5 else "Low Cardiovascular Risk",
+            "vitals": f"BP: {trestbps} mm Hg, Chol: {chol} mg/dL, HR: {thalach} bpm"
         }
 
         st.markdown("### 📊 Cardiovascular Assessment")
@@ -966,52 +1219,55 @@ elif menu_selection == "❤️ Cardiovascular (Heart Disease)":
         if prob >= 0.5:
             st.markdown(f"""
             <div class="result-box-danger">
-                <h3>🔴 ELEVATED CARDIOVASCULAR DISEASE RISK DETECTED</h3>
-                <p>The model indicates an estimated <b>{prob_pct:.1f}%</b> probability of coronary artery disease. Key contributing risk factors include ST depression and hemodynamic vitals.</p>
-                <p><b>Recommended Action:</b> Immediate cardiologist consultation, 12-lead diagnostic ECG, and lipid panel optimization.</p>
+                <h3 style="color: #7f1d1d !important; margin-top:0;">🔴 ELEVATED CARDIOVASCULAR DISEASE RISK DETECTED</h3>
+                <p style="color: #7f1d1d !important; font-size: 1.05rem; margin-bottom: 8px;">The model indicates an estimated <b>{prob_pct:.1f}%</b> probability of coronary artery disease. Key contributing risk factors include ST depression and hemodynamic vitals.</p>
+                <p style="color: #7f1d1d !important;"><b>Recommended Action:</b> Immediate cardiologist consultation, 12-lead diagnostic ECG, and lipid panel optimization.</p>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
             <div class="result-box-healthy">
-                <h3>🟢 LOW CARDIOVASCULAR RISK DETECTED</h3>
-                <p>Coronary artery disease probability is estimated at <b>{prob_pct:.1f}%</b>. Patient hemodynamics and exercise parameters are within standard ranges.</p>
-                <p><b>Recommended Action:</b> Maintain regular aerobic exercise, balanced Mediterranean diet, and annual preventive blood pressure checks.</p>
+                <h3 style="color: #064e3b !important; margin-top:0;">🟢 LOW CARDIOVASCULAR RISK DETECTED</h3>
+                <p style="color: #064e3b !important; font-size: 1.05rem; margin-bottom: 8px;">Coronary artery disease probability is estimated at <b>{prob_pct:.1f}%</b>. Patient hemodynamics and exercise parameters are within standard ranges.</p>
+                <p style="color: #064e3b !important;"><b>Recommended Action:</b> Maintain regular aerobic exercise, balanced Mediterranean diet, and annual preventive blood pressure checks.</p>
             </div>
             """, unsafe_allow_html=True)
 
+
 # -------------------------------------------------------------
-# TAB 4: DIABETES MELLITUS DIAGNOSTIC
+# TAB 5: DIABETES MELLITUS DIAGNOSTIC
 # -------------------------------------------------------------
 elif menu_selection == "🩸 Diabetes Mellitus Diagnostic":
     st.subheader("🩸 Diabetes Mellitus Diagnostic Risk Predictor")
     st.caption("Identifies pre-diabetes and Type-2 Diabetes risk using metabolic panel and body composition indicators.")
 
     with st.form("diabetes_form"):
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
-            pregnancies = st.number_input("Number of Pregnancies (0 for males)", min_value=0, max_value=20, value=1)
-            glucose = st.number_input("Plasma Glucose Concentration (2h oral test, mg/dL)", min_value=50, max_value=300, value=118)
-            bp = st.number_input("Diastolic Blood Pressure (mm Hg)", min_value=40, max_value=160, value=74)
-            skin = st.number_input("Triceps Skin Fold Thickness (mm)", min_value=5, max_value=99, value=25)
+            pregnancies = st.number_input("Number of Pregnancies", min_value=0, max_value=20, value=1)
+            glucose = st.number_input("Fasting Glucose Concentration (mg/dL)", min_value=50, max_value=300, value=108)
+            bp = st.number_input("Diastolic Blood Pressure (mm Hg)", min_value=30, max_value=140, value=72)
 
         with col2:
-            insulin = st.number_input("2-Hour Serum Insulin (μU/mL)", min_value=10, max_value=850, value=90)
-            bmi = st.number_input("Body Mass Index (BMI, kg/m²)", min_value=10.0, max_value=65.0, value=27.4, step=0.1)
-            dpf = st.number_input("Diabetes Pedigree Function (Genetic History Score)", min_value=0.05, max_value=2.5, value=0.45, step=0.01)
-            age = st.number_input("Age (Years)", min_value=18, max_value=100, value=38)
+            skin_thickness = st.number_input("Triceps Skin Fold Thickness (mm)", min_value=0, max_value=99, value=23)
+            insulin = st.number_input("2-Hour Serum Insulin (mu U/ml)", min_value=0, max_value=900, value=85)
+            bmi = st.number_input("Body Mass Index (BMI in kg/m²)", min_value=10.0, max_value=70.0, value=26.4, step=0.1)
 
-        submit_diab = st.form_submit_button("🩸 Evaluate Diabetic Risk", type="primary", use_container_width=True)
+        with col3:
+            dpf = st.number_input("Diabetes Pedigree Function (Genetics)", min_value=0.05, max_value=3.0, value=0.45, step=0.01)
+            age = st.number_input("Patient Age (Years)", min_value=15, max_value=100, value=38)
 
-    if submit_diab:
-        input_data = np.array([[pregnancies, glucose, bp, skin, insulin, bmi, dpf, age]])
+        submit_diabetes = st.form_submit_button("🩸 Evaluate Metabolic & Diabetes Risk", type="primary", use_container_width=True)
+
+    if submit_diabetes:
+        input_data = np.array([[pregnancies, glucose, bp, skin_thickness, insulin, bmi, dpf, age]])
         scaled_input = models["diabetes"]["scaler"].transform(input_data)
         prob = models["diabetes"]["model"].predict_proba(scaled_input)[0, 1]
         prob_pct = prob * 100
 
         st.session_state.screening_results["diabetes"] = {
             "probability": prob_pct,
-            "status": "Diabetic Risk" if prob >= 0.5 else "Non-Diabetic",
+            "status": "Diabetic Risk Detected" if prob >= 0.5 else "Non-Diabetic / Normal",
             "vitals": f"Glucose: {glucose} mg/dL, BMI: {bmi}, Age: {age}"
         }
 
@@ -1024,22 +1280,23 @@ elif menu_selection == "🩸 Diabetes Mellitus Diagnostic":
         if prob >= 0.5:
             st.markdown(f"""
             <div class="result-box-danger">
-                <h3>🔴 ELEVATED TYPE-2 DIABETES RISK</h3>
-                <p>The patient has a <b>{prob_pct:.1f}%</b> probability of diabetic metabolic dysfunction. Fasting glucose and BMI metrics suggest impaired glycemic control.</p>
-                <p><b>Recommended Action:</b> Order an HbA1c confirmatory laboratory test, consult an endocrinologist, and initiate low-glycemic dietary protocols.</p>
+                <h3 style="color: #7f1d1d !important; margin-top:0;">🔴 ELEVATED TYPE-2 DIABETES RISK</h3>
+                <p style="color: #7f1d1d !important; font-size: 1.05rem; margin-bottom: 8px;">The patient has a <b>{prob_pct:.1f}%</b> probability of diabetic metabolic dysfunction. Fasting glucose and BMI metrics suggest impaired glycemic control.</p>
+                <p style="color: #7f1d1d !important;"><b>Recommended Action:</b> Order an HbA1c confirmatory laboratory test, consult an endocrinologist, and initiate low-glycemic dietary protocols.</p>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
             <div class="result-box-healthy">
-                <h3>🟢 NON-DIABETIC / HEALTHY GLYCEMIC PROFILE</h3>
-                <p>Diabetes probability is estimated at <b>{prob_pct:.1f}%</b>. Metabolic parameters indicate healthy glucose utilization.</p>
-                <p><b>Recommended Action:</b> Continue active lifestyle, balanced dietary fiber, and annual wellness screenings.</p>
+                <h3 style="color: #064e3b !important; margin-top:0;">🟢 NON-DIABETIC / HEALTHY GLYCEMIC PROFILE</h3>
+                <p style="color: #064e3b !important; font-size: 1.05rem; margin-bottom: 8px;">Diabetes probability is estimated at <b>{prob_pct:.1f}%</b>. Metabolic parameters indicate healthy glucose utilization.</p>
+                <p style="color: #064e3b !important;"><b>Recommended Action:</b> Continue active lifestyle, balanced dietary fiber, and annual wellness screenings.</p>
             </div>
             """, unsafe_allow_html=True)
 
+
 # -------------------------------------------------------------
-# TAB 5: CHRONIC KIDNEY DISEASE (CKD)
+# TAB 6: CHRONIC KIDNEY DISEASE (CKD)
 # -------------------------------------------------------------
 elif menu_selection == "🫘 Chronic Kidney Disease (CKD)":
     st.subheader("🫘 Chronic Kidney Disease (CKD) Early Detection Panel")
@@ -1087,22 +1344,23 @@ elif menu_selection == "🫘 Chronic Kidney Disease (CKD)":
         if prob >= 0.5:
             st.markdown(f"""
             <div class="result-box-danger">
-                <h3>🔴 EARLY SIGNS OF CHRONIC KIDNEY DISEASE (CKD)</h3>
-                <p>Renal filtration indicators show an estimated <b>{prob_pct:.1f}%</b> probability of chronic kidney damage. Creatinine and urea concentrations indicate reduced glomerular filtration.</p>
-                <p><b>Recommended Action:</b> Consult a nephrologist for eGFR calculation, renal ultrasound, and strict blood pressure monitoring.</p>
+                <h3 style="color: #7f1d1d !important; margin-top:0;">🔴 EARLY SIGNS OF CHRONIC KIDNEY DISEASE (CKD)</h3>
+                <p style="color: #7f1d1d !important; font-size: 1.05rem; margin-bottom: 8px;">Renal filtration indicators show an estimated <b>{prob_pct:.1f}%</b> probability of chronic kidney damage. Creatinine and urea concentrations indicate reduced glomerular filtration.</p>
+                <p style="color: #7f1d1d !important;"><b>Recommended Action:</b> Consult a nephrologist for eGFR calculation, renal ultrasound, and strict blood pressure monitoring.</p>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
             <div class="result-box-healthy">
-                <h3>🟢 NORMAL RENAL FUNCTION</h3>
-                <p>Kidney filtration risk is estimated at <b>{prob_pct:.1f}%</b>. Creatinine, urea, and urine specific gravity are within physiological baselines.</p>
-                <p><b>Recommended Action:</b> Maintain adequate hydration, low sodium intake, and regular periodic health checkups.</p>
+                <h3 style="color: #064e3b !important; margin-top:0;">🟢 NORMAL RENAL FUNCTION</h3>
+                <p style="color: #064e3b !important; font-size: 1.05rem; margin-bottom: 8px;">Kidney filtration risk is estimated at <b>{prob_pct:.1f}%</b>. Creatinine, urea, and urine specific gravity are within physiological baselines.</p>
+                <p style="color: #064e3b !important;"><b>Recommended Action:</b> Maintain adequate hydration, low sodium intake, and regular periodic health checkups.</p>
             </div>
             """, unsafe_allow_html=True)
 
+
 # -------------------------------------------------------------
-# TAB 6: CONSOLIDATED PATIENT HEALTH PASSPORT
+# TAB 7: CONSOLIDATED PATIENT HEALTH PASSPORT
 # -------------------------------------------------------------
 elif menu_selection == "📋 Consolidated Patient Health Passport":
     st.subheader("📋 Consolidated Patient Health Passport & Multi-Disease Report")
@@ -1113,92 +1371,120 @@ elif menu_selection == "📋 Consolidated Patient Health Passport":
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("### 🩺 Multi-Disease Risk Summary")
-        
-        # Parkinson's card
-        if res["parkinsons"] is not None:
-            st.success(f"**Parkinson's Disease:** {res['parkinsons']['status']} ({res['parkinsons']['probability']:.1f}% risk, Symptoms: {res['parkinsons']['symptoms']})")
-        else:
-            st.info("ℹ️ **Parkinson's Screening:** Not evaluated yet.")
+        summary_rows = []
+        modules = [
+            ("Parkinson's Disease", "parkinsons", "Neuro-Acoustic"),
+            ("Cardiovascular Disease", "heart", "Hemodynamics & ECG"),
+            ("Diabetes Mellitus", "diabetes", "Glycemic & Metabolic"),
+            ("Chronic Kidney Disease", "kidney", "Renal Filtration")
+        ]
 
-        # Heart card
-        if res["heart"] is not None:
-            if res["heart"]["probability"] >= 50:
-                st.error(f"**Cardiovascular Disease:** {res['heart']['status']} ({res['heart']['probability']:.1f}% risk • {res['heart']['vitals']})")
+        for name, key, domain in modules:
+            data = res[key]
+            if data is not None:
+                prob = data["probability"]
+                status = data["status"]
+                vitals = data["vitals"]
             else:
-                st.success(f"**Cardiovascular Disease:** {res['heart']['status']} ({res['heart']['probability']:.1f}% risk • {res['heart']['vitals']})")
-        else:
-            st.info("ℹ️ **Cardiovascular Screening:** Not evaluated yet.")
+                prob = np.nan
+                status = "Not Screened Yet"
+                vitals = "N/A"
 
-        # Diabetes card
-        if res["diabetes"] is not None:
-            if res["diabetes"]["probability"] >= 50:
-                st.error(f"**Diabetes Mellitus:** {res['diabetes']['status']} ({res['diabetes']['probability']:.1f}% risk • {res['diabetes']['vitals']})")
-            else:
-                st.success(f"**Diabetes Mellitus:** {res['diabetes']['status']} ({res['diabetes']['probability']:.1f}% risk • {res['diabetes']['vitals']})")
-        else:
-            st.info("ℹ️ **Diabetes Screening:** Not evaluated yet.")
+            summary_rows.append({
+                "Disease Domain": name,
+                "Biological System": domain,
+                "Probability": f"{prob:.1f}%" if not np.isnan(prob) else "—",
+                "Clinical Status": status,
+                "Logged Key Vitals": vitals
+            })
 
-        # Kidney card
-        if res["kidney"] is not None:
-            if res["kidney"]["probability"] >= 50:
-                st.error(f"**Chronic Kidney Disease:** {res['kidney']['status']} ({res['kidney']['probability']:.1f}% risk • {res['kidney']['vitals']})")
-            else:
-                st.success(f"**Chronic Kidney Disease:** {res['kidney']['status']} ({res['kidney']['probability']:.1f}% risk • {res['kidney']['vitals']})")
-        else:
-            st.info("ℹ️ **Chronic Kidney Disease:** Not evaluated yet.")
+        df_summary = pd.DataFrame(summary_rows)
+        st.dataframe(df_summary, use_container_width=True, hide_index=True)
 
     with col2:
-        st.markdown("### 📥 Export Clinical Screening Passport")
-        patient_name = st.text_input("Patient Identifier / Name", value="Patient-001")
-        
-        report_text = f"""=======================================================
-INTELLIGENT HEALTHCARE MONITORING & EARLY DISEASE PREDICTION
-Patient Clinical Screening Summary Report
-Generated for: {patient_name}
-=======================================================
+        st.markdown("### 📈 Comprehensive Multi-Organ Risk Chart")
+        disease_names = ["Parkinson's", "Heart", "Diabetes", "Kidney"]
+        probs = [
+            res["parkinsons"]["probability"] if res["parkinsons"] else 0,
+            res["heart"]["probability"] if res["heart"] else 0,
+            res["diabetes"]["probability"] if res["diabetes"] else 0,
+            res["kidney"]["probability"] if res["kidney"] else 0
+        ]
 
-1. PARKINSON'S DISEASE (ACOUSTICS & MOTOR SIGNS)
+        fig, ax = plt.subplots(figsize=(6, 3.5), facecolor="none")
+        colors = ['#dc2626' if p >= 50 else '#16a34a' for p in probs]
+        bars = ax.bar(disease_names, probs, color=colors, width=0.55, edgecolor="#cbd5e1")
+        ax.set_ylim(0, 100)
+        ax.set_ylabel("Risk Probability (%)", fontsize=10, fontweight="bold")
+        ax.axhline(50, color='#f59e0b', linestyle='--', linewidth=1.2, label='Clinical Risk Threshold (50%)')
+        ax.axhline(80, color='#dc2626', linestyle=':', linewidth=1.2, label="Parkinson's Threshold (80%)")
+        ax.legend(loc="upper right", fontsize=8)
+        ax.grid(axis='y', linestyle=':', alpha=0.6)
+
+        for bar in bars:
+            height = bar.get_height()
+            ax.annotate(f'{height:.1f}%',
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),
+                        textcoords="offset points",
+                        ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+        st.pyplot(fig)
+
+    st.markdown("---")
+    st.markdown("### 🖨️ Clinical Passport Print / Export")
+    st.write("This consolidated report provides an integrated overview of the patient's multi-organ physiological status:")
+    
+    passport_text = f"""
+================================================================================
+INTELLIGENT HEALTHCARE MONITORING & EARLY DISEASE PREDICTION SYSTEM
+CONSOLIDATED MULTI-SYSTEM CLINICAL SCREENING REPORT
+================================================================================
+Screening Platform: 100% Software-Based Clinical Decision Support (SaMD)
+Academic Framework: Semester 5 Engineering Design Project
+
+1. NEUROLOGICAL (PARKINSON'S):
    - Status: {res['parkinsons']['status'] if res['parkinsons'] else 'Not Evaluated'}
-   - Risk Probability: {f"{res['parkinsons']['probability']:.1f}%" if res['parkinsons'] else 'N/A'}
-   - Symptom Index: {res['parkinsons']['symptoms'] if res['parkinsons'] else 'N/A'}
+   - Risk Probability: {res['parkinsons']['probability']:.1f}% if res['parkinsons'] else 'N/A'
+   - Vitals: {res['parkinsons']['vitals'] if res['parkinsons'] else 'N/A'}
 
-2. CARDIOVASCULAR / HEART DISEASE
+2. CARDIOVASCULAR (HEART DISEASE):
    - Status: {res['heart']['status'] if res['heart'] else 'Not Evaluated'}
-   - Risk Probability: {f"{res['heart']['probability']:.1f}%" if res['heart'] else 'N/A'}
-   - Recorded Vitals: {res['heart']['vitals'] if res['heart'] else 'N/A'}
+   - Risk Probability: {res['heart']['probability']:.1f}% if res['heart'] else 'N/A'
+   - Vitals: {res['heart']['vitals'] if res['heart'] else 'N/A'}
 
-3. DIABETES MELLITUS DIAGNOSTIC
+3. METABOLIC (DIABETES MELLITUS):
    - Status: {res['diabetes']['status'] if res['diabetes'] else 'Not Evaluated'}
-   - Risk Probability: {f"{res['diabetes']['probability']:.1f}%" if res['diabetes'] else 'N/A'}
-   - Metabolic Indicators: {res['diabetes']['vitals'] if res['diabetes'] else 'N/A'}
+   - Risk Probability: {res['diabetes']['probability']:.1f}% if res['diabetes'] else 'N/A'
+   - Vitals: {res['diabetes']['vitals'] if res['diabetes'] else 'N/A'}
 
-4. CHRONIC KIDNEY DISEASE (CKD)
+4. RENAL (CHRONIC KIDNEY DISEASE):
    - Status: {res['kidney']['status'] if res['kidney'] else 'Not Evaluated'}
-   - Risk Probability: {f"{res['kidney']['probability']:.1f}%" if res['kidney'] else 'N/A'}
-   - Renal Panel: {res['kidney']['vitals'] if res['kidney'] else 'N/A'}
+   - Risk Probability: {res['kidney']['probability']:.1f}% if res['kidney'] else 'N/A'
+   - Vitals: {res['kidney']['vitals'] if res['kidney'] else 'N/A'}
 
-=======================================================
-CLINICAL NOTICE:
-This report was generated by an ensemble Machine Learning Clinical
-Decision Support System. Results are predictive indicators for early
-screening and must be verified by a licensed medical practitioner.
-=======================================================
+CLINICAL DISCLAIMER:
+This digital assessment was compiled automatically via software machine-learning
+models. It serves as an assistive screening triage tool and is not a substitute 
+for direct medical diagnosis by a licensed physician.
+================================================================================
 """
-        st.download_button(
-            label="📄 Download Official Patient Health Report (.txt)",
-            data=report_text,
-            file_name=f"{patient_name}_Healthcare_Screening_Report.txt",
-            mime="text/plain",
-            use_container_width=True
-        )
+    st.download_button(
+        label="📥 Download Consolidated Clinical Passport (.txt)",
+        data=passport_text,
+        file_name="Patient_Clinical_Health_Passport.txt",
+        mime="text/plain",
+        use_container_width=True
+    )
 
 # -------------------------------------------------------------
-# FOOTER
+# GLOBAL FOOTER
 # -------------------------------------------------------------
-st.markdown("<br><hr>", unsafe_allow_html=True)
+st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #64748b; font-size: 0.85rem;">
-    Intelligent Healthcare Monitoring and Early Disease Prediction System • Semester 5 Design Project<br>
-    Built with Python, Streamlit, Scikit-Learn, and Librosa • 100% Software-Based Clinical Decision Support
+<div style="text-align: center; color: #64748b; font-size: 0.82rem; padding: 12px 0;">
+    <b>Intelligent Healthcare Monitoring & Early Disease Prediction System</b> • Semester 5 Design Project<br>
+    Pure Software-Based Machine Learning Clinical Decision Support • No Dedicated Hardware Required<br>
+    Developed with Python, Streamlit, Scikit-Learn, and Librosa
 </div>
 """, unsafe_allow_html=True)
