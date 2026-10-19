@@ -12,6 +12,10 @@ An end-to-end, multi-disease Clinical Decision Support System (CDSS) built using
   2. ❤️ **Cardiovascular (Heart) Disease:** Coronary artery disease risk estimation using hemodynamic vitals and stress test biomarkers.
   3. 🩸 **Diabetes Mellitus:** Metabolic dysfunction and insulin resistance risk assessment based on glycemic and anthropometric metrics.
   4. 🫘 **Chronic Kidney Disease (CKD):** Early asymptomatic renal failure detection using routine blood/urine biochemical filtration markers.
+- **🤖 AI Medical Chatbot & Visual Image Triaging:**
+  - **Conversational Symptom Checker:** Interactive triage asking targeted follow-up questions for acute symptoms (e.g., fever duration/temperature, cough, acidity, headaches).
+  - **Evidence-Based Home Remedies:** Instant actionable herbal and supportive home remedies with clinical red flag warnings.
+  - **Medical Image Disease Identifier:** Uploads medical photos or scans (edema photos, ECG strips, glucometer screens, handwriting tremor spirals) to detect which of the 4 diseases matches the visual pattern.
 - **100% Software-Based (No External Hardware):**
   - Runs purely in the browser.
   - Acoustic screening uses standard built-in laptop/smartphone microphones or file uploads.

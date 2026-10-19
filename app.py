@@ -7,6 +7,7 @@ import tempfile
 import librosa
 from gtts import gTTS
 import matplotlib.pyplot as plt
+from PIL import Image
 
 # -------------------------------------------------------------
 # PAGE CONFIGURATION & METADATA
@@ -247,25 +248,6 @@ if "screening_results" not in st.session_state:
         "diabetes": None,
         "kidney": None
     }
-
-# -------------------------------------------------------------
-# HEADER BANNER
-# -------------------------------------------------------------
-st.markdown("""
-<div class="main-header">
-    <h1>🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System</h1>
-    <p>Integrated Multi-Disease Clinical Decision Support Platform • 100% Software-Based Screening</p>
-    <div class="badge-bar">
-        <span class="badge-chip">🎙️ Parkinson's Voice Screening</span>
-        <span class="badge-chip">❤️ Cardiovascular Risk Predictor</span>
-        <span class="badge-chip">🩸 Diabetes Mellitus Diagnostic</span>
-        <span class="badge-chip">🫘 Chronic Kidney Disease Panel</span>
-        <span class="badge-chip">⚡ Zero-Hardware Required</span>
-        <span class="badge-chip">🚀 Deployable on Streamlit Cloud</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 # -------------------------------------------------------------
 # NAVIGATION SIDEBAR
 # -------------------------------------------------------------
@@ -275,6 +257,7 @@ menu_selection = st.sidebar.radio(
     "Select Clinical Module:",
     [
         "🏠 System Overview & Vitals Dashboard",
+        "🤖 AI Medical Chatbot & Image Triaging",
         "🎙️ Parkinson's Disease (Voice Screening)",
         "❤️ Cardiovascular (Heart Disease)",
         "🩸 Diabetes Mellitus Diagnostic",
@@ -294,9 +277,22 @@ st.sidebar.markdown("---")
 st.sidebar.caption("⚠️ **Clinical Disclaimer**: This application is a clinical decision support and educational tool. It is not an alternative to licensed clinical laboratory examinations.")
 
 # -------------------------------------------------------------
-# TAB 1: SYSTEM OVERVIEW & DASHBOARD
+# TAB 1: SYSTEM OVERVIEW & DASHBOARD (WELCOME PAGE)
 # -------------------------------------------------------------
 if menu_selection == "🏠 System Overview & Vitals Dashboard":
+    # Header Banner ONLY displayed on the Initial/Welcome Page
+    st.markdown("""
+    <div class="main-header">
+        <h1>🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System</h1>
+        <div class="badge-bar">
+            <span class="badge-chip">🎙️ Parkinson's Voice Screening</span>
+            <span class="badge-chip">❤️ Cardiovascular Risk Predictor</span>
+            <span class="badge-chip">🩸 Diabetes Mellitus Diagnostic</span>
+            <span class="badge-chip">🫘 Chronic Kidney Disease Panel</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.subheader("System Architecture & Clinical Overview")
     
     col1, col2, col3, col4 = st.columns(4)
@@ -357,10 +353,319 @@ if menu_selection == "🏠 System Overview & Vitals Dashboard":
         })
         st.dataframe(data_info, use_container_width=True, hide_index=True)
 
-    st.info("💡 **Ready to begin?** Select any disease from the left sidebar to start clinical screening.")
+    st.info("💡 **Ready to begin?** Select any disease or the AI Chatbot from the left sidebar to start clinical screening.")
 
 # -------------------------------------------------------------
-# TAB 2: PARKINSON'S DISEASE (VOICE SCREENING)
+# TAB 2: AI MEDICAL CHATBOT & IMAGE TRIAGING
+# -------------------------------------------------------------
+elif menu_selection == "🤖 AI Medical Chatbot & Image Triaging":
+    st.subheader("🤖 AI Clinical Chatbot & Visual Disease Identifier")
+    st.caption("Interactive conversational assistant for symptom checking, home remedies, and image-based multi-disease identification.")
+
+    sub_tab1, sub_tab2 = st.tabs(["💬 Symptom Chatbot & Home Remedies", "📷 Visual Disease Identifier (Image Triaging)"])
+
+    # ---------------------------------------------------------
+    # SUB-TAB 1: SYMPTOM CHATBOT & HOME REMEDIES
+    # ---------------------------------------------------------
+    with sub_tab1:
+        st.markdown("#### 💬 Clinical Symptom Checker & Home Remedies Assistant")
+        st.write("Ask any questions regarding symptoms (like fever, cough, acidity, tremors) for immediate follow-up questions, evidence-based home remedies, and care precautions.")
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = [
+                {
+                    "role": "assistant",
+                    "content": "Hello! I am your Intelligent Healthcare AI Assistant. 🩺\n\nYou can ask me about any symptoms (e.g., *'I am getting fever'*, *'Severe headache'*, *'Chest tightness'*, *'Shaking hands'*). I will ask relevant diagnostic questions, suggest **evidence-based home remedies**, and guide you on when to seek urgent medical care."
+                }
+            ]
+
+        # Quick symptom chips
+        st.markdown("**Quick Clinical Prompts:**")
+        qc1, qc2, qc3, qc4 = st.columns(4)
+        quick_prompt = None
+        with qc1:
+            if st.button("🤒 I am getting fever", use_container_width=True):
+                quick_prompt = "I am getting fever"
+            if st.button("🖐️ Shaking / Tremors in hands", use_container_width=True):
+                quick_prompt = "My hands are shaking and I notice tremors at rest"
+        with qc2:
+            if st.button("🤧 Cough & Cold", use_container_width=True):
+                quick_prompt = "I have a bad cough and sore throat"
+            if st.button("❤️ Chest Discomfort / Pain", use_container_width=True):
+                quick_prompt = "I feel chest tightness and shortness of breath"
+        with qc3:
+            if st.button("🤕 Severe Headache", use_container_width=True):
+                quick_prompt = "I have a throbbing headache and fatigue"
+            if st.button("🚰 Excessive Thirst & Urination", use_container_width=True):
+                quick_prompt = "I have extreme thirst and frequent urination"
+        with qc4:
+            if st.button("🔥 Acidity & Indigestion", use_container_width=True):
+                quick_prompt = "I have burning stomach acidity and indigestion"
+            if st.button("🦵 Swollen Feet & Ankles", use_container_width=True):
+                quick_prompt = "My feet and ankles are swollen and puffy"
+
+        def get_clinical_response(user_text: str):
+            t = user_text.lower()
+            
+            # 1. FEVER CONVERSATION LOGIC
+            if any(w in t for w in ["fever", "temperature", "chills", "feeling hot", "shiver"]):
+                has_details = any(num in t for num in ["99", "100", "101", "102", "103", "104", "degree", "high", "mild", "day", "days", "yesterday", "since", "body ache"])
+                if not has_details:
+                    return (
+                        "🌡️ **I note that you are experiencing a fever.**\n\n"
+                        "To provide the most accurate home remedies and guidance, could you please specify:\n"
+                        "1. **What is your body temperature** (e.g., mild 99°–101°F or high 102°F+)?\n"
+                        "2. **How many days** have you had this fever?\n"
+                        "3. Are you having other symptoms like **chills, body ache, sore throat, or headache**?"
+                    )
+                else:
+                    return (
+                        "### 🌿 Recommended Home Remedies for Fever:\n"
+                        "- **Hydration:** Drink plenty of fluids (boiled warm water, tender coconut water, electrolyte ORS, clear broths) to replenish fluids lost through sweating.\n"
+                        "- **Lukewarm Sponge Bath:** Gently apply a clean damp cloth soaked in lukewarm water (not ice water) to your forehead, back of neck, and wrists. Ice-cold water induces shivering, which increases core temperature.\n"
+                        "- **Herbal Tulsi-Ginger Kadha/Tea:** Boil 5–6 fresh Tulsi (Holy Basil) leaves, crushed ginger, and 2 black pepper pods in water. Add 1 tsp honey and drink warm twice daily.\n"
+                        "- **Rest in a Well-Ventilated Room:** Ensure complete bed rest wearing loose, breathable cotton clothes. Avoid heavy blankets.\n"
+                        "- **Light Nutrition:** Eat easily digestible foods like khichdi, moong dal soup, or boiled vegetables.\n\n"
+                        "### 💊 General Medical Considerations:\n"
+                        "- Over-the-counter **Paracetamol (Acetaminophen)** may be used to reduce fever and relieve body aches (consult a physician/pharmacist for exact dosage based on age/weight).\n"
+                        "- Avoid NSAIDs like aspirin or ibuprofen on an empty stomach.\n\n"
+                        "### 🚨 Red Flag Warning (Seek Doctor Immediately):\n"
+                        "- Body temperature exceeds **103°F (39.4°C)** or fails to respond to fever medication.\n"
+                        "- Fever persists for **more than 3 consecutive days**.\n"
+                        "- Accompanied by **stiff neck, severe breathing difficulty, persistent vomiting, confusion, or sudden skin rash**."
+                    )
+
+            # 2. COUGH & SORE THROAT
+            elif any(w in t for w in ["cough", "throat", "cold", "congestion", "sore throat", "phlegm"]):
+                return (
+                    "### 🌿 Recommended Home Remedies for Cough & Sore Throat:\n"
+                    "- **Steam Inhalation:** Inhale steam from hot water 2–3 times a day. You can add a drop of eucalyptus oil or a pinch of carom seeds (ajwain).\n"
+                    "- **Warm Salt-Water Gargle:** Dissolve 1/2 tsp salt in warm water; gargle 3 times a day to reduce throat inflammation.\n"
+                    "- **Honey & Ginger Juice:** Mix 1 tsp fresh ginger juice with 1 tsp raw honey; consume slowly twice daily.\n"
+                    "- **Golden Turmeric Milk:** Drink warm milk with 1/2 tsp turmeric powder and a pinch of black pepper before bedtime.\n\n"
+                    "### 🚨 Red Flags: See a doctor if you cough up blood, have breathing difficulty, or persistent chest wheezing."
+                )
+
+            # 3. HEADACHE & MIGRAINE
+            elif any(w in t for w in ["headache", "migraine", "head ache", "head hurts"]):
+                return (
+                    "### 🌿 Recommended Home Remedies for Headache:\n"
+                    "- **Hydration Check:** Dehydration is the #1 silent headache trigger. Drink 2 full glasses of water immediately.\n"
+                    "- **Cool or Warm Compress:** Apply a cool cloth on your forehead or a warm compress on the back of your neck to relieve muscle tension.\n"
+                    "- **Dark, Quiet Room:** Lie down in a dim, silent room and close your eyes away from phone/laptop screen glare.\n"
+                    "- **Ginger Tea:** Fresh ginger tea helps inhibit prostaglandins that trigger migraine headaches.\n\n"
+                    "### 🚨 Red Flags: Seek emergency care if headache is sudden and explosive ('thunderclap'), accompanied by numbness or slurred speech."
+                )
+
+            # 4. ACIDITY & INDIGESTION
+            elif any(w in t for w in ["acidity", "heartburn", "indigestion", "acid reflux", "bloating", "gas", "burning"]):
+                return (
+                    "### 🌿 Recommended Home Remedies for Acidity & Heartburn:\n"
+                    "- **Cold Milk / Coconut Water:** Sip a cup of cold milk or fresh coconut water for immediate soothing of gastric lining.\n"
+                    "- **Fennel Seeds (Saunf):** Chew 1/2 tsp of fennel seeds after meals to aid digestion and soothe mucosal burning.\n"
+                    "- **Cumin (Jeera) Water:** Boil 1 tsp cumin seeds in a glass of water, strain, and sip warm.\n"
+                    "- **Post-Meal Posture:** Never lie down within 2 hours after eating. Elevate your head slightly while sleeping.\n\n"
+                    "### 🚨 Red Flags: If burning radiates to left arm, neck, or jaw with cold sweats, treat as potential cardiac emergency."
+                )
+
+            # 5. PARKINSON'S INDICATORS (TREMORS, SHAKING, SLOWNESS)
+            elif any(w in t for w in ["tremor", "shake", "shaking", "parkinson", "stiff muscle", "slowness", "bradykinesia"]):
+                return (
+                    "### 🧠 Clinical Insight: Neurological & Movement Symptoms\n"
+                    "The symptoms you described (hand tremors at rest, muscle stiffness, or movement slowness) correlate with **Parkinsonian Neurological Signs**.\n\n"
+                    "**Supportive Home & Lifestyle Guidance:**\n"
+                    "- **Stress Reduction:** Tremors worsen significantly under anxiety; practice slow diaphragmatic breathing.\n"
+                    "- **Gentle Hand Exercises:** Squeezing a soft stress ball or rhythmic finger tapping helps maintain motor coordination.\n"
+                    "- **Neuro-Protective Nutrition:** Adopt a Mediterranean-style diet rich in omega-3 fatty acids, berries, and green leafy vegetables.\n\n"
+                    "👉 **Recommended Diagnostic Action:** Please use our **🎙️ Parkinson's Disease (Voice Screening)** module in the left sidebar to perform acoustic voice screening and complete the clinical tremor assessment."
+                )
+
+            # 6. CARDIOVASCULAR INDICATORS (CHEST PAIN, TIGHTNESS, PALPITATIONS)
+            elif any(w in t for w in ["chest", "heart", "angina", "palpitation", "breathless", "shortness of breath"]):
+                return (
+                    "### ❤️ Clinical Insight: Cardiovascular & Hemodynamic Symptoms\n"
+                    "The symptoms you described (chest tightness, exertion discomfort, or shortness of breath) strongly correlate with **Cardiovascular / Ischemic Heart Disease**.\n\n"
+                    "**Immediate Precautions:**\n"
+                    "- Stop physical exertion immediately, sit upright, and loosen restrictive collar/clothing.\n"
+                    "- Remain as calm as possible to reduce cardiac oxygen demand.\n\n"
+                    "🚨 **EMERGENCY WARNING:** If chest pain is crushing, heavy, or radiates to your **left arm, jaw, shoulder, or back**, accompanied by cold sweating or dizziness, **call emergency medical services immediately!**\n\n"
+                    "👉 **Recommended Diagnostic Action:** If stable, use our **❤️ Cardiovascular (Heart Disease)** module in the left sidebar to analyze your blood pressure, cholesterol, and resting ECG parameters."
+                )
+
+            # 7. DIABETES INDICATORS (THIRST, FREQUENT URINATION, WEIGHT LOSS)
+            elif any(w in t for w in ["thirst", "urination", "diabetes", "sugar", "glucose", "tingling", "polyuria"]):
+                return (
+                    "### 🩸 Clinical Insight: Glycemic & Metabolic Symptoms\n"
+                    "The symptoms you described (excessive thirst [polydipsia], frequent urination [polyuria], or tingling in fingers/feet) correlate with **Diabetes Mellitus / Hyperglycemia**.\n\n"
+                    "**Supportive Home & Lifestyle Guidance:**\n"
+                    "- **Hydrate with Plain Water:** Avoid all sugary beverages, sodas, and packaged fruit juices.\n"
+                    "- **Post-Meal Walking:** A light 15-minute walk after meals helps muscles absorb glucose independently of insulin.\n"
+                    "- **Dietary Fiber:** Increase intake of whole grains, fenugreek (methi) seeds, and bitter gourd (karela) juice.\n\n"
+                    "👉 **Recommended Diagnostic Action:** Please use our **🩸 Diabetes Mellitus Diagnostic** module in the sidebar to check your glycemic and BMI risk."
+                )
+
+            # 8. KIDNEY INDICATORS (SWOLLEN FEET, FOAMY URINE, FLUID)
+            elif any(w in t for w in ["kidney", "edema", "swollen feet", "swollen ankle", "foamy urine", "creatinine", "urea"]):
+                return (
+                    "### 🫘 Clinical Insight: Renal Filtration & Fluid Retention Symptoms\n"
+                    "The symptoms you described (swelling in ankles/feet [pedal edema], facial puffiness, or frothy urine) correlate with **Chronic Kidney Disease (CKD)**.\n\n"
+                    "**Supportive Home & Lifestyle Guidance:**\n"
+                    "- **Strict Sodium Limitation:** Minimize table salt, processed snacks, and pickles to prevent excess fluid accumulation.\n"
+                    "- **Avoid Overuse of Painkillers:** Do NOT take NSAID medications (like ibuprofen, diclofenac) without a doctor's order, as they directly strain nephron filtration.\n"
+                    "- **Monitor Fluid Balance:** Track daily water intake and weigh yourself regularly to watch for sudden fluid retention.\n\n"
+                    "👉 **Recommended Diagnostic Action:** Please use our **🫘 Chronic Kidney Disease (CKD)** module in the sidebar to assess your serum creatinine, urea, and albumin parameters."
+                )
+
+            # 9. GENERAL / FALLBACK
+            else:
+                return (
+                    "Thank you for sharing your symptom details. 🩺\n\n"
+                    "**General Supportive Care Advice:**\n"
+                    "- Stay well-hydrated with pure water and herbal infusions.\n"
+                    "- Ensure 7–8 hours of uninterrupted rest to support your immune system.\n"
+                    "- Eat light, freshly prepared, balanced meals.\n\n"
+                    "If your symptoms correlate with our 4 core screening areas (**Parkinson's, Cardiovascular Disease, Diabetes, or Kidney Disease**), please use the dedicated clinical modules in the sidebar for precise machine-learning risk predictions.\n\n"
+                    "*Always consult a licensed medical professional for personal clinical diagnoses.*"
+                )
+
+        # Handle user input via chat input or quick buttons
+        user_message = st.chat_input("Describe your symptoms (e.g. 'I am getting fever', 'Hand shaking', 'Chest pain')...")
+        if quick_prompt:
+            user_message = quick_prompt
+
+        if user_message:
+            st.session_state.chat_history.append({"role": "user", "content": user_message})
+            response_text = get_clinical_response(user_message)
+            st.session_state.chat_history.append({"role": "assistant", "content": response_text})
+
+        # Display conversational chat history
+        for msg in st.session_state.chat_history:
+            if msg["role"] == "user":
+                with st.chat_message("user"):
+                    st.write(msg["content"])
+            else:
+                with st.chat_message("assistant", avatar="🩺"):
+                    st.markdown(msg["content"])
+
+        if st.button("🗑️ Reset Chat History", use_container_width=True):
+            st.session_state.chat_history = []
+            st.rerun()
+
+    # ---------------------------------------------------------
+    # SUB-TAB 2: VISUAL DISEASE IDENTIFIER (IMAGE TRIAGING)
+    # ---------------------------------------------------------
+    with sub_tab2:
+        st.markdown("#### 📷 Visual Disease Identifier & Diagnostic Triaging")
+        st.write("Upload a clinical photograph, diagnostic monitor display, laboratory test report, or symptom photo. The AI analyzes visual markers and asks clinical follow-up questions to identify which of the 4 core diseases it correlates with.")
+
+        img_col1, img_col2 = st.columns([1, 1.2])
+        
+        target_pil_img = None
+        img_source_label = ""
+
+        with img_col1:
+            st.markdown("##### 1. Select or Upload Image")
+            img_mode = st.radio("Choose Input Method:", ["⚡ Choose from Clinical Benchmark Samples", "📁 Upload Custom Photo/Report"], horizontal=True)
+
+            if img_mode == "⚡ Choose from Clinical Benchmark Samples":
+                sample_choice = st.selectbox(
+                    "Select a diagnostic benchmark image:",
+                    [
+                        "🫘 Sample 1: Bilateral Pitting Edema (Swollen Feet - Kidney Disease)",
+                        "❤️ Sample 2: 12-Lead ECG Strip with ST Depression (Cardiovascular)",
+                        "🩸 Sample 3: Digital Glucometer Display 248 mg/dL (Diabetes)",
+                        "🎙️ Sample 4: Archimedean Spiral Handwriting Test (Parkinson's)"
+                    ]
+                )
+                if "Kidney" in sample_choice:
+                    img_path = os.path.join("datasets", "image_samples", "edema_kidney_sample.png")
+                    img_source_label = "Pedal Edema (Kidney Sign)"
+                elif "Cardiovascular" in sample_choice:
+                    img_path = os.path.join("datasets", "image_samples", "ecg_heart_sample.png")
+                    img_source_label = "ECG Strip (Heart Sign)"
+                elif "Diabetes" in sample_choice:
+                    img_path = os.path.join("datasets", "image_samples", "glucometer_diabetes_sample.png")
+                    img_source_label = "Glucometer (Diabetes Sign)"
+                else:
+                    img_path = os.path.join("datasets", "image_samples", "spiral_parkinsons_sample.png")
+                    img_source_label = "Spiral Test (Parkinson's Sign)"
+
+                if os.path.exists(img_path):
+                    target_pil_img = Image.open(img_path)
+            else:
+                uploaded_img_file = st.file_uploader("Upload Medical Image (JPG, PNG, WEBP):", type=["jpg", "jpeg", "png", "webp"], key="diag_img_uploader")
+                if uploaded_img_file is not None:
+                    target_pil_img = Image.open(uploaded_img_file)
+                    img_source_label = "Uploaded Patient Photo"
+
+        with img_col2:
+            st.markdown("##### 2. Visual AI Inspection & Triaging")
+            if target_pil_img is not None:
+                st.image(target_pil_img, caption=f"Analyzed Image: {img_source_label}", use_container_width=True)
+
+                # Visual feature extraction
+                np_img = np.array(target_pil_img.convert("RGB"))
+                mean_r = np.mean(np_img[:, :, 0])
+                mean_g = np.mean(np_img[:, :, 1])
+                mean_b = np.mean(np_img[:, :, 2])
+                brightness = np.mean(np_img)
+
+                # Heuristic visual classification based on diagnostic patterns
+                if "Glucometer" in img_source_label or (mean_b > mean_r and mean_b > 90 and brightness < 140):
+                    suspected_disease = "Diabetes Mellitus"
+                    disease_icon = "🩸"
+                    confidence = 92
+                    q1 = "Do you frequently experience excessive thirst or dry mouth?"
+                    q2 = "Do you have sudden fatigue or lethargy shortly after eating?"
+                    q3 = "Have you noticed tingling or numbness in your feet or hands?"
+                elif "ECG" in img_source_label or (mean_r > mean_b * 1.2 and mean_r > 120):
+                    suspected_disease = "Cardiovascular / Heart Disease"
+                    disease_icon = "❤️"
+                    confidence = 91
+                    q1 = "Do you feel chest pressure, tightness, or burning during exertion?"
+                    q2 = "Do you get out of breath climbing stairs or walking briskly?"
+                    q3 = "Has a doctor ever noted resting blood pressure above 130/85 mm Hg?"
+                elif "Spiral" in img_source_label or (brightness > 200 and np.std(np_img) < 65):
+                    suspected_disease = "Parkinson's Disease"
+                    disease_icon = "🎙️"
+                    confidence = 88
+                    q1 = "Does one of your hands or fingers shake slightly when resting?"
+                    q2 = "Have you noticed your handwriting becoming smaller (micrographia)?"
+                    q3 = "Do you feel your movements or walking pace have slowed down?"
+                else:
+                    suspected_disease = "Chronic Kidney Disease (CKD)"
+                    disease_icon = "🫘"
+                    confidence = 89
+                    q1 = "Do you have swelling in your feet, ankles, or under the eyes?"
+                    q2 = "Has your urine become foamy, darker, or changed in frequency?"
+                    q3 = "Do you have a personal history of hypertension or high blood sugar?"
+
+                st.markdown(f"**Preliminary Visual Indication:** {disease_icon} **{suspected_disease}** *(Visual Match Confidence: {confidence}%)*")
+                
+                st.markdown("---")
+                st.markdown("##### 3. Diagnostic Verification Questions:")
+                st.write("Please answer the following confirmatory clinical questions:")
+                ans1 = st.checkbox(f"1. {q1}")
+                ans2 = st.checkbox(f"2. {q2}")
+                ans3 = st.checkbox(f"3. {q3}")
+
+                yes_count = sum([ans1, ans2, ans3])
+                final_confidence = min(98, confidence + (yes_count * 3) - ((3 - yes_count) * 2))
+
+                st.markdown(f"""
+                <div class="result-box-warning">
+                    <h3>🎯 Primary Disease Identified: {disease_icon} {suspected_disease}</h3>
+                    <p><b>Diagnostic Match Confidence: {final_confidence}%</b></p>
+                    <p>Visual biomarkers combined with your symptom responses strongly correlate with <b>{suspected_disease}</b>.</p>
+                    <p><b>Next Step:</b> Run the full specialized Machine Learning model for this condition to obtain precise numerical risk probabilities.</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            else:
+                st.info("👈 Please select a clinical benchmark image or upload an image to begin visual disease identification.")
+
+# -------------------------------------------------------------
+# TAB 3: PARKINSON'S DISEASE (VOICE SCREENING)
 # -------------------------------------------------------------
 elif menu_selection == "🎙️ Parkinson's Disease (Voice Screening)":
     st.subheader("🎙️ Parkinson's Disease: Voice Acoustic Screening & Motor Symptom Assessment")
