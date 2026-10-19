@@ -113,8 +113,3 @@ Because the system uses `librosa` for audio frequency extraction, **Streamlit Co
 
 ---
 
-## 👨‍🏫 Viva & College Presentation Talking Points
-
-1. **Why No Hardware?** Explain the concept of **Software-as-a-Medical-Device (SaMD)**. Most patients already undergo routine lab tests (lipid profile, blood glucose, creatinine). The AI acts as an early risk detection filter that aggregates disparate clinical markers before costly diagnostic interventions.
-2. **Multi-Modal Data Integration:** Show that the platform handles **acoustic signals** (Parkinson's voice frequency transformations), **physiological vitals** (Blood pressure, Heart rate), **metabolic profiles** (Glucose, Insulin), and **biochemical markers** (Creatinine, Urea).
-3. **Clinical Cross-Correlation:** Highlight that Diabetes is a primary driver of both Cardiovascular Disease and Chronic Kidney Disease (Diabetic Nephropathy), making a consolidated multi-disease portal clinically meaningful.
