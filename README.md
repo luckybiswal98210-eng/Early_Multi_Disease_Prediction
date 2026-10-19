@@ -95,25 +95,79 @@ Open your browser at `http://localhost:8501`.
 
 ---
 
-## 🌐 1-Click Free Cloud Deployment Guide
+---
 
-Because the system uses `librosa` for audio frequency extraction, **Streamlit Community Cloud** (`share.streamlit.io`) is the ideal deployment platform:
+## 🌐 Full Production Deployment Architecture (Vercel + Next.js + MongoDB + Render)
 
-1. **Push your code to GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "Intelligent Healthcare Monitoring Multi-Disease System"
-   git remote add origin https://github.com/YOUR_USERNAME/intelligent-healthcare-system.git
-   git push -u origin main
-   ```
-2. **Go to [share.streamlit.io](https://share.streamlit.io)** and log in with GitHub.
-3. Click **"New App"**:
-   - Repository: `YOUR_USERNAME/intelligent-healthcare-system`
-   - Branch: `main`
-   - Main file path: `app.py`
-4. Click **Deploy!**
-5. You will receive a permanent, live, shareable URL (e.g. `https://intelligent-healthcare-system.streamlit.app`).
+This project features a complete **Production Web Application** with:
+- **Frontend:** Next.js (React 19) deployable on **Vercel**
+- **Database:** **MongoDB Atlas** for multi-user self-registration, authentication, and lifetime diagnostic logs
+- **ML Backend:** Python FastAPI microservice deployable on **Render** / **Railway**
+- **Admin Portal:** Exclusive administrative dashboard for monitoring all registered users and screening records
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│               Vercel Frontend (Next.js App)                     │
+│  - Self-Registration & Auth (Email / Password)                 │
+│  - Patient Portal (4 Diseases, Vitals, Audio Recording)         │
+│  - 👑 Master Admin Portal (All Users, All Records, CSV Export) │
+└───────────────────────┬───────────────────────┬─────────────────┘
+                        │                       │
+                        ▼                       ▼
+            ┌──────────────────────┐  ┌──────────────────────┐
+            │  MongoDB Atlas Cloud │  │ FastAPI ML Backend   │
+            │  - Users Collection  │  │ - Scikit-Learn Models│
+            │  - Screening Logs    │  │ - Librosa 20 MFCCs   │
+            │  (Free Cloud Tier)   │  │ (Render / Railway)   │
+            └──────────────────────┘  └──────────────────────┘
+```
+
+### 1. Deploy Frontend to Vercel (Free)
+1. Go to **[vercel.com](https://vercel.com)** and log in with GitHub.
+2. Click **"Add New..."** -> **"Project"** and import `luckybiswal98210-eng/Early_Multi_Disease_Prediction`.
+3. In **Project Settings**:
+   - Set **Root Directory** to `frontend`
+4. Under **Environment Variables**, add:
+   - `MONGODB_URI`: Your free MongoDB Atlas connection string (`mongodb+srv://...`)
+   - `NEXT_PUBLIC_API_URL`: URL of your deployed FastAPI backend (e.g., `https://healthcare-ml-backend.onrender.com`)
+5. Click **Deploy!** You will get a live URL (e.g. `https://early-multi-disease-prediction.vercel.app`).
+
+### 2. Set Up MongoDB Atlas (Free Cloud Database)
+1. Sign up at **[mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)**.
+2. Create a **Free Shared Cluster (M0)**.
+3. Under **Database Access**, create a user (username + password).
+4. Under **Network Access**, allow IP `0.0.0.0/0` (access from anywhere).
+5. Click **Connect** -> **Drivers** and copy your `mongodb+srv://...` URI.
+6. Paste it into your Vercel Environment Variables.
+
+### 3. Deploy ML Backend to Render (Free)
+1. Sign up at **[render.com](https://render.com)**.
+2. Click **"New +"** -> **"Web Service"** and connect this repository.
+3. Settings:
+   - **Root Directory:** `backend`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. Click **Create Web Service**. Copy the generated URL into Vercel's `NEXT_PUBLIC_API_URL`.
 
 ---
+
+## 👥 Multi-User Roles & Admin Credentials
+
+- **Self-Service Registration:** Any user visiting the website can sign up with their Full Name, Email, Password, Age, and Gender. Their test results and health passports are private to their account.
+- **👑 Administrator Portal:**
+  - **Admin Email:** `admin@health.org`
+  - **Admin Password:** `admin123`
+  - When logged in as Admin, a golden **👑 Master Admin Portal** tab unlocks with:
+    - Registered Users Directory (Name, Email, Age, Join Date)
+    - Master Screening Logs across all patients
+    - One-Click **Export All Records to CSV**
+
+---
+
+## 💻 Alternative: Running Streamlit App Locally
+If you prefer running the single-file Streamlit version:
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
