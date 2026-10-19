@@ -9,3 +9,5 @@ gTTS>=2.5.0
 matplotlib>=3.8.0
 Pillow>=10.0.0
 pytesseract>=0.3.10
+pymongo>=4.6.0
+dnspython>=2.4.0

@@ -338,8 +338,11 @@ def play_spoken_text(text: str, lang_code: str = "en"):
 # -------------------------------------------------------------
 # SESSION STATE INITIALIZATION
 # -------------------------------------------------------------
-if "in_dashboard" not in st.session_state:
-    st.session_state.in_dashboard = False
+# -------------------------------------------------------------
+# SESSION STATE INITIALIZATION
+# -------------------------------------------------------------
+if "authenticated_user" not in st.session_state:
+    st.session_state.authenticated_user = None
 
 if "screening_results" not in st.session_state:
     st.session_state.screening_results = {
@@ -354,9 +357,9 @@ title_banner_path = os.path.join(base_dir, "assets", "title_banner.png")
 banner_img_path = os.path.join(base_dir, "assets", "healthcare_banner.png")
 
 # -------------------------------------------------------------
-# GATEKEEPER: DEDICATED FULL-SCREEN WELCOME PAGE
+# GATEKEEPER: LANDING HERO & USER SELF-REGISTRATION / LOGIN
 # -------------------------------------------------------------
-if not st.session_state.in_dashboard:
+if st.session_state.authenticated_user is None:
     # 1. Background Title Banner Card (First Image given by user)
     if os.path.exists(title_banner_path):
         render_image(title_banner_path)
@@ -375,8 +378,8 @@ if not st.session_state.in_dashboard:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # 2. Hero Layout with Anatomy Graphic (Second Image given by user) + Welcome Portal
-    w_col_img, w_col_info = st.columns([1.25, 1])
+    # 2. Hero Layout with Anatomy Graphic (Second Image given by user) + Auth Portal
+    w_col_img, w_col_info = st.columns([1.2, 1])
 
     with w_col_img:
         if os.path.exists(banner_img_path):
@@ -387,30 +390,72 @@ if not st.session_state.in_dashboard:
 
     with w_col_info:
         st.markdown("""
-        <div class="welcome-card">
-            <h2 style="color: #38bdf8; margin-top: 0; font-size: 1.55rem; font-weight: 700;">
-                🏥 Welcome to the Intelligent Healthcare Portal
+        <div class="welcome-card" style="margin-bottom: 16px;">
+            <h2 style="color: #38bdf8; margin-top: 0; font-size: 1.45rem; font-weight: 700;">
+                🏥 Clinical Decision Portal
             </h2>
-            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">
-                An integrated, non-invasive clinical decision support system designed for <b>early detection and risk stratification</b> of chronic medical conditions using machine learning, acoustic signal phonetics, and biochemical vitals.
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
+                Self-register as a patient to screen 4 chronic diseases and track your personal health records, or log in as Clinic Admin.
             </p>
-            <div style="background: rgba(15, 23, 42, 0.6); border-radius: 10px; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;">
-                <div style="margin-bottom: 8px; font-size: 0.88rem;">🎙️ <b>Parkinson's Disease</b>: Acoustic vowel analysis (MFCCs & tremors)</div>
-                <div style="margin-bottom: 8px; font-size: 0.88rem;">❤️ <b>Cardiovascular Risk</b>: Ischemic vitals & hemodynamic predictors</div>
-                <div style="margin-bottom: 8px; font-size: 0.88rem;">🩸 <b>Diabetes Mellitus</b>: Fasting glucose & metabolic profiling</div>
-                <div style="margin-bottom: 8px; font-size: 0.88rem;">🫘 <b>Kidney Disease (CKD)</b>: Renal filtration & serum creatinine panel</div>
-                <div style="font-size: 0.88rem;">🤖 <b>AI Medical Assistant</b>: Prescription understanding & clinical image triaging</div>
-            </div>
-            <div style="color: #38bdf8; font-size: 0.85rem; font-weight: 600; margin-bottom: 18px;">
-                ⚡ 100% Software-Based (SaMD) • Zero Hardware Required • 13 Spoken Audio Languages
-            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚀 ENTER CLINICAL DASHBOARD & PREDICTION PORTAL", type="primary", use_container_width=True):
-            st.session_state.in_dashboard = True
-            st.rerun()
+        auth_tab_login, auth_tab_reg = st.tabs(["🔑 Sign In", "📝 Self-Registration (Sign Up)"])
+
+        with auth_tab_login:
+            with st.form("portal_login_form"):
+                l_email = st.text_input("Email Address", placeholder="name@example.com")
+                l_pass = st.text_input("Password", type="password", placeholder="••••••••")
+                btn_login = st.form_submit_button("🚀 Log In to Dashboard", type="primary", use_container_width=True)
+                if btn_login:
+                    res = db_manager.authenticate_user(l_email, l_pass)
+                    if res["success"]:
+                        st.session_state.authenticated_user = res["user"]
+                        st.success(f"Welcome back, {res['user']['name']}!")
+                        st.rerun()
+                    else:
+                        st.error(f"⚠️ {res['error']}")
+
+            st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 8px 0;'>— OR QUICK-TEST WITH ONE CLICK —</p>", unsafe_allow_html=True)
+            col_d1, col_d2 = st.columns(2)
+            with col_d1:
+                if st.button("👤 Demo Patient", use_container_width=True):
+                    res = db_manager.authenticate_user("patient@health.org", "patient123")
+                    if res["success"]:
+                        st.session_state.authenticated_user = res["user"]
+                        st.rerun()
+            with col_d2:
+                if st.button("👑 Admin Portal", use_container_width=True):
+                    res = db_manager.authenticate_user("admin@health.org", "admin123")
+                    if res["success"]:
+                        st.session_state.authenticated_user = res["user"]
+                        st.rerun()
+
+        with auth_tab_reg:
+            with st.form("portal_register_form"):
+                r_name = st.text_input("Full Patient Name *", placeholder="e.g. Ramesh Sharma")
+                r_email = st.text_input("Email Address *", placeholder="name@example.com")
+                r_pass = st.text_input("Create Password *", type="password", placeholder="Minimum 6 characters")
+                r_c1, r_c2 = st.columns(2)
+                with r_c1:
+                    r_age = st.number_input("Age", min_value=1, max_value=120, value=40)
+                with r_c2:
+                    r_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+                r_contact = st.text_input("Contact Number (Optional)", placeholder="+91 98765 00000")
+
+                btn_reg = st.form_submit_button("✅ Register Free Account", type="primary", use_container_width=True)
+                if btn_reg:
+                    if not r_name.strip() or not r_email.strip() or not r_pass.strip():
+                        st.error("⚠️ Full name, email, and password are required.")
+                    else:
+                        role = "admin" if "admin" in r_email.lower() else "patient"
+                        res = db_manager.register_user(r_name, r_email, r_pass, r_age, r_gender, r_contact, role)
+                        if res["success"]:
+                            st.session_state.authenticated_user = res["user"]
+                            st.success(f"Registered {r_name} successfully!")
+                            st.rerun()
+                        else:
+                            st.error(f"⚠️ {res['error']}")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -435,9 +480,9 @@ if not st.session_state.in_dashboard:
     with c3:
         st.markdown("""
         <div class="metric-card">
-            <div class="metric-title">Signal Modalities</div>
-            <div class="metric-value">Multi-Modal</div>
-            <div class="metric-desc">Audio Acoustics, Vitals, Image OCR</div>
+            <div class="metric-title">Cloud Database</div>
+            <div class="metric-value">Permanent</div>
+            <div class="metric-desc">MongoDB Atlas persistent storage</div>
         </div>
         """, unsafe_allow_html=True)
     with c4:
@@ -461,78 +506,37 @@ if not st.session_state.in_dashboard:
 
 
 # -------------------------------------------------------------
-# DASHBOARD NAVIGATION SIDEBAR (RENDERED ONLY AFTER ENTERING)
+# DASHBOARD NAVIGATION SIDEBAR (AUTHENTICATED USER)
 # -------------------------------------------------------------
-st.sidebar.title("Navigation Hub")
+curr_user = st.session_state.authenticated_user
 
-if st.sidebar.button("🚪 Exit to Welcome Page", use_container_width=True):
-    st.session_state.in_dashboard = False
+st.sidebar.markdown(f"### 👤 {curr_user['name']}")
+role_color = "orange" if curr_user["role"] == "admin" else "blue"
+st.sidebar.markdown(f"Role: :{role_color}[**{curr_user['role'].upper()}**] • ID: `{curr_user['user_id']}`")
+st.sidebar.caption(f"📧 {curr_user['email']}")
+
+if st.sidebar.button("🚪 Sign Out / Exit", use_container_width=True):
+    st.session_state.authenticated_user = None
+    st.session_state.screening_results = {"parkinsons": None, "heart": None, "diabetes": None, "kidney": None}
     st.rerun()
 
+st.sidebar.caption(f"💾 Storage: **{db_manager.get_database_status()}**")
 st.sidebar.markdown("---")
 
-# MULTI-USER & PATIENT PROFILE MANAGER (SQLITE BACKED)
-st.sidebar.markdown("### 👤 Patient Profile (Multi-User)")
-all_patients = db_manager.get_all_patients()
-patient_options = {f"{p['name']} ({p['patient_id']})": p['patient_id'] for p in all_patients}
+menu_options = [
+    "🏠 System Overview & Vitals Dashboard",
+    "🤖 AI Medical Chatbot & Image Triaging",
+    "🎙️ Parkinson's Disease (Voice Screening)",
+    "❤️ Cardiovascular (Heart Disease)",
+    "🩸 Diabetes Mellitus Diagnostic",
+    "🫘 Chronic Kidney Disease (CKD)",
+    "📋 Consolidated Patient Health Passport"
+]
 
-if "active_patient_id" not in st.session_state or st.session_state.active_patient_id not in [p['patient_id'] for p in all_patients]:
-    st.session_state.active_patient_id = all_patients[0]['patient_id'] if all_patients else "P-1001"
+if curr_user["role"] == "admin":
+    menu_options.append("👑 Master Admin Portal & All Records")
 
-curr_idx = 0
-for i, (label, pid) in enumerate(patient_options.items()):
-    if pid == st.session_state.active_patient_id:
-        curr_idx = i
-        break
-
-selected_patient_label = st.sidebar.selectbox(
-    "Active Screening Patient:",
-    options=list(patient_options.keys()),
-    index=curr_idx,
-    key="patient_profile_selector"
-)
-st.session_state.active_patient_id = patient_options[selected_patient_label]
-active_patient_data = db_manager.get_patient(st.session_state.active_patient_id) or {}
-
-with st.sidebar.expander("➕ Register New Patient Profile"):
-    with st.form("new_patient_reg_form"):
-        p_name = st.text_input("Full Patient Name", placeholder="e.g. Ananya Rao")
-        col_pa, col_pg = st.columns(2)
-        with col_pa:
-            p_age = st.number_input("Age", min_value=1, max_value=120, value=42)
-        with col_pg:
-            p_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-        p_contact = st.text_input("Contact", placeholder="+91 98765 12345")
-        p_notes = st.text_area("Medical History Notes", placeholder="e.g. Mild hypertension")
-        
-        btn_reg = st.form_submit_button("Create Patient Profile", use_container_width=True)
-        if btn_reg:
-            if p_name.strip():
-                new_id = f"P-{1000 + len(all_patients) + 1}"
-                db_manager.add_patient(new_id, p_name.strip(), p_age, p_gender, p_contact, p_notes)
-                st.session_state.active_patient_id = new_id
-                st.sidebar.success(f"Registered {p_name} ({new_id})!")
-                st.rerun()
-            else:
-                st.sidebar.error("Name cannot be blank.")
-
-st.sidebar.caption(f"Active ID: `{st.session_state.active_patient_id}` • Age: {active_patient_data.get('age', 'N/A')} • Gender: {active_patient_data.get('gender', 'N/A')}")
-
-st.sidebar.markdown("---")
-
-menu_selection = st.sidebar.radio(
-    "Select Clinical Module:",
-    [
-        "🏠 System Overview & Vitals Dashboard",
-        "🤖 AI Medical Chatbot & Image Triaging",
-        "🎙️ Parkinson's Disease (Voice Screening)",
-        "❤️ Cardiovascular (Heart Disease)",
-        "🩸 Diabetes Mellitus Diagnostic",
-        "🫘 Chronic Kidney Disease (CKD)",
-        "📋 Consolidated Patient Health Passport",
-        "📁 Multi-User Records & Clinical Database"
-    ]
-)
+menu_selection = st.sidebar.radio("Select Clinical Module:", menu_options)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 📊 Active Models Status")
@@ -1172,9 +1176,11 @@ elif menu_selection == "🎙️ Parkinson's Disease (Voice Screening)":
                                 "vitals": f"Acoustic Prob: {prob_pct:.1f}%, Symptoms: {sym_risk}"
                             }
 
-                            # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+                            # AUTOMATIC DATABASE PERSISTENCE (MONGODB / SQLITE)
                             db_manager.save_screening_record(
-                                patient_id=st.session_state.active_patient_id,
+                                user_id=curr_user["user_id"],
+                                user_name=curr_user["name"],
+                                user_email=curr_user["email"],
                                 disease="Parkinson's Disease",
                                 probability=prob_pct,
                                 status="Parkinson's Detected" if prob_pct >= 80 else "Healthy Voice",
@@ -1270,9 +1276,11 @@ elif menu_selection == "❤️ Cardiovascular (Heart Disease)":
             "vitals": f"BP: {trestbps} mm Hg, Chol: {chol} mg/dL, HR: {thalach} bpm"
         }
 
-        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        # AUTOMATIC DATABASE PERSISTENCE (MONGODB / SQLITE)
         db_manager.save_screening_record(
-            patient_id=st.session_state.active_patient_id,
+            user_id=curr_user["user_id"],
+            user_name=curr_user["name"],
+            user_email=curr_user["email"],
             disease="Cardiovascular Disease",
             probability=prob_pct,
             status="Heart Disease Risk Detected" if prob >= 0.5 else "Low Cardiovascular Risk",
@@ -1340,9 +1348,11 @@ elif menu_selection == "🩸 Diabetes Mellitus Diagnostic":
             "vitals": f"Glucose: {glucose} mg/dL, BMI: {bmi}, Age: {age}"
         }
 
-        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        # AUTOMATIC DATABASE PERSISTENCE (MONGODB / SQLITE)
         db_manager.save_screening_record(
-            patient_id=st.session_state.active_patient_id,
+            user_id=curr_user["user_id"],
+            user_name=curr_user["name"],
+            user_email=curr_user["email"],
             disease="Diabetes Mellitus",
             probability=prob_pct,
             status="Diabetic Risk Detected" if prob >= 0.5 else "Non-Diabetic / Normal",
@@ -1413,9 +1423,11 @@ elif menu_selection == "🫘 Chronic Kidney Disease (CKD)":
             "vitals": f"Creatinine: {sc} mg/dL, Urea: {bu} mg/dL, Albumin: {al}"
         }
 
-        # AUTOMATIC DATABASE PERSISTENCE (MULTI-USER)
+        # AUTOMATIC DATABASE PERSISTENCE (MONGODB / SQLITE)
         db_manager.save_screening_record(
-            patient_id=st.session_state.active_patient_id,
+            user_id=curr_user["user_id"],
+            user_name=curr_user["name"],
+            user_email=curr_user["email"],
             disease="Chronic Kidney Disease",
             probability=prob_pct,
             status="CKD Detected" if prob >= 0.5 else "Healthy Kidneys",
@@ -1565,28 +1577,28 @@ for direct medical diagnosis by a licensed physician.
     )
 
 # -------------------------------------------------------------
-# TAB 8: MULTI-USER RECORDS & CLINICAL DATABASE
+# TAB 8: MASTER ADMIN PORTAL & CLINICAL DATABASE
 # -------------------------------------------------------------
-elif menu_selection == "📁 Multi-User Records & Clinical Database":
-    st.subheader("📁 Multi-User Clinical Database & Longitudinal Health Records")
-    st.caption("Secure, persistent patient management and multi-disease diagnostic tracking powered by SQLite.")
+elif menu_selection == "👑 Master Admin Portal & All Records" and curr_user["role"] == "admin":
+    st.subheader("👑 Master Administrator Portal & Global Clinical Records")
+    st.caption(f"Centralized patient oversight and surveillance powered by {db_manager.get_database_status()}.")
 
-    patients_list = db_manager.get_all_patients()
+    all_users = db_manager.get_all_users()
     all_records = db_manager.get_screening_records()
 
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     with m_col1:
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">Registered Patients</div>
-            <div class="metric-value">{len(patients_list)}</div>
-            <div class="metric-desc">Multi-user active profiles</div>
+            <div class="metric-title">Registered Users</div>
+            <div class="metric-value">{len(all_users)}</div>
+            <div class="metric-desc">Self-registered patient accounts</div>
         </div>
         """, unsafe_allow_html=True)
     with m_col2:
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">Screening Records</div>
+            <div class="metric-title">Total Screenings</div>
             <div class="metric-value">{len(all_records)}</div>
             <div class="metric-desc">Lifetime diagnostic logs</div>
         </div>
@@ -1595,102 +1607,68 @@ elif menu_selection == "📁 Multi-User Records & Clinical Database":
         elevated_count = sum(1 for r in all_records if "Detected" in r.get("status", "") or r.get("probability", 0) >= 50)
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">Elevated Risk Logs</div>
+            <div class="metric-title">High Risk Flags</div>
             <div class="metric-value" style="color: #dc2626;">{elevated_count}</div>
-            <div class="metric-desc">Flagged for clinical consult</div>
+            <div class="metric-desc">Alerted for physician consultation</div>
         </div>
         """, unsafe_allow_html=True)
     with m_col4:
-        active_patient_name = db_manager.get_patient(st.session_state.active_patient_id).get('name', 'Active') if db_manager.get_patient(st.session_state.active_patient_id) else 'Active'
         st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">Active Profile</div>
-            <div class="metric-value" style="font-size: 1.25rem;">{st.session_state.active_patient_id}</div>
-            <div class="metric-desc">{active_patient_name}</div>
+            <div class="metric-title">Cloud Storage</div>
+            <div class="metric-value" style="font-size: 1.15rem; color: #10b981;">Active</div>
+            <div class="metric-desc">{db_manager.get_database_status()}</div>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    db_tab1, db_tab2, db_tab3 = st.tabs([
-        "📜 Historical Diagnostic Records",
-        "📈 Longitudinal Risk Evolution Charts",
-        "👥 Patient Directory & Registration"
+    adm_tab1, adm_tab2 = st.tabs([
+        "📜 Master Screening Logs (All Patients)",
+        "👥 Registered Users Directory"
     ])
 
-    with db_tab1:
-        st.markdown("#### 📜 Diagnostic Screening History")
-        filter_col1, filter_col2 = st.columns([1.5, 1])
-        with filter_col1:
-            view_filter = st.radio(
-                "Filter records by:",
-                [f"Active Patient Only ({st.session_state.active_patient_id})", "All Registered Patients"],
-                horizontal=True
-            )
-        
-        target_pid = st.session_state.active_patient_id if "Active Patient Only" in view_filter else None
-        records_to_show = db_manager.get_screening_records(target_pid)
-
-        if records_to_show:
-            df_recs = pd.DataFrame(records_to_show)
-            df_display = df_recs[["record_id", "timestamp", "patient_id", "patient_name", "disease", "probability", "status", "vitals"]].rename(columns={
-                "record_id": "Record #",
+    with adm_tab1:
+        st.markdown("#### 📜 All Diagnostic Screening Records Across Platform")
+        if all_records:
+            df_recs = pd.DataFrame(all_records)
+            cols_show = ["timestamp", "user_name", "user_email", "disease", "probability", "status", "vitals"]
+            cols_avail = [c for c in cols_show if c in df_recs.columns]
+            df_display = df_recs[cols_avail].rename(columns={
                 "timestamp": "Date & Time",
-                "patient_id": "Patient ID",
-                "patient_name": "Patient Name",
-                "disease": "Disease Module",
+                "user_name": "Patient Name",
+                "user_email": "User Email",
+                "disease": "Disease",
                 "probability": "Risk (%)",
                 "status": "Diagnostic Outcome",
-                "vitals": "Key Clinical Vitals"
+                "vitals": "Logged Vitals"
             })
             st.dataframe(df_display, use_container_width=True, hide_index=True)
 
             csv_data = df_display.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Export Clinical Records to CSV",
+                label="📥 Export All Patient Records to CSV",
                 data=csv_data,
-                file_name=f"Clinical_Records_{target_pid or 'All_Patients'}.csv",
+                file_name=f"Master_Clinical_Records_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
                 use_container_width=True
             )
         else:
-            st.info("ℹ️ No screening records recorded yet for this selection. Run a screening test in any disease module to automatically record clinical results here!")
+            st.info("No screening records recorded in the database yet.")
 
-    with db_tab2:
-        st.markdown(f"#### 📈 Longitudinal Risk Tracking for {st.session_state.active_patient_id}")
-        p_recs = db_manager.get_screening_records(st.session_state.active_patient_id)
-        if len(p_recs) >= 2:
-            df_trend = pd.DataFrame(p_recs)
-            df_trend = df_trend.sort_values(by="record_id")
-            
-            fig_trend, ax_trend = plt.subplots(figsize=(8, 3.5), facecolor="none")
-            for dis in df_trend["disease"].unique():
-                sub = df_trend[df_trend["disease"] == dis]
-                ax_trend.plot(range(len(sub)), sub["probability"], marker='o', linewidth=2, label=dis)
-            
-            ax_trend.set_ylabel("Risk Probability (%)", fontweight="bold")
-            ax_trend.set_xlabel("Sequential Test Order", fontweight="bold")
-            ax_trend.set_ylim(0, 100)
-            ax_trend.axhline(50, color='#f59e0b', linestyle='--', alpha=0.7, label='Clinical Threshold (50%)')
-            ax_trend.legend(loc="upper right", fontsize=8)
-            ax_trend.grid(True, linestyle=':', alpha=0.6)
-            st.pyplot(fig_trend)
-        elif len(p_recs) == 1:
-            st.info(f"Only 1 screening recorded for {st.session_state.active_patient_id}. Perform additional screenings over time to view longitudinal trend charts.")
-        else:
-            st.info("No records yet for this patient.")
-
-    with db_tab3:
-        st.markdown("#### 👥 Registered Patient Profiles Directory")
-        df_pts = pd.DataFrame(patients_list)[["patient_id", "name", "age", "gender", "contact", "created_at"]].rename(columns={
-            "patient_id": "Patient ID",
+    with adm_tab2:
+        st.markdown("#### 👥 Registered Patient & Admin Accounts")
+        df_users = pd.DataFrame(all_users)[["user_id", "name", "email", "role", "age", "gender", "contact", "created_at"]].rename(columns={
+            "user_id": "User ID",
             "name": "Full Name",
+            "email": "Email Address",
+            "role": "Role",
             "age": "Age",
             "gender": "Gender",
-            "contact": "Contact Info",
-            "created_at": "Registration Date"
+            "contact": "Contact",
+            "created_at": "Joined On"
         })
-        st.dataframe(df_pts, use_container_width=True, hide_index=True)
+        st.dataframe(df_users, use_container_width=True, hide_index=True)
 
 # -------------------------------------------------------------
 # GLOBAL FOOTER
