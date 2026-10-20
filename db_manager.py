@@ -22,7 +22,12 @@ mongo_db = None
 if MONGO_URI:
     try:
         from pymongo import MongoClient
-        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=4000)
+        try:
+            import certifi
+            ca_file = certifi.where()
+            mongo_client = MongoClient(MONGO_URI, tlsCAFile=ca_file, serverSelectionTimeoutMS=4000)
+        except Exception:
+            mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=4000)
         # Test connection
         mongo_client.admin.command('ping')
         mongo_db = mongo_client["healthcare_cdss_db"]
