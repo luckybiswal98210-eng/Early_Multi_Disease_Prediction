@@ -387,10 +387,60 @@ banner_img_path = os.path.join(base_dir, "assets", "healthcare_banner.png")
 # GATEKEEPER: LANDING HERO & USER SELF-REGISTRATION / LOGIN
 # -------------------------------------------------------------
 if st.session_state.authenticated_user is None:
-    st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+    # LANDING PAGE STYLING: EXACT MATCH TO MOCKUP
+    st.markdown("""
+    <style>
+        [data-testid="stAppViewContainer"] {
+            background: radial-gradient(circle at 10% 20%, #f0f7ff 0%, #e0f2fe 55%, #f8fafc 100%) !important;
+        }
+        .block-container {
+            max-width: 1400px !important;
+            padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+        }
+        /* Make column 2 the single cohesive white card */
+        [data-testid="column"]:nth-of-type(2) {
+            background: #ffffff !important;
+            border-radius: 24px !important;
+            padding: 28px 26px 22px !important;
+            box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            margin-top: 6px !important;
+        }
+        [data-testid="stForm"] {
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+        .stTextInput input {
+            background-color: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+            color: #0f172a !important;
+            padding: 10px 14px !important;
+        }
+        .stFormSubmitButton button {
+            background: linear-gradient(135deg, #ff4b4b 0%, #ef4444 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            padding: 12px 20px !important;
+            font-size: 1.0rem !important;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+        }
+        .stFormSubmitButton button:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45) !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # 2-Column Hero: Left = Unified Medical Graphic (Title + Anatomy), Right = Clinical Decision Portal
-    w_col_img, w_col_info = st.columns([1.35, 1], gap="medium")
+    # 2-Column Hero: Left = Wide Medical Graphic (Title + Anatomy), Right = Single Clinical Decision Portal Card
+    w_col_img, w_col_info = st.columns([1.75, 1], gap="small")
 
     with w_col_img:
         if os.path.exists(welcome_hero_path):
@@ -400,17 +450,15 @@ if st.session_state.authenticated_user is None:
 
     with w_col_info:
         st.markdown("""
-        <div class="welcome-card" style="margin-bottom: 14px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span style="font-size: 1.4rem;">🏥</span>
-                <h2 style="color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.3px;">
-                    Clinical Decision Portal
-                </h2>
-            </div>
-            <p style="color: #64748b; font-size: 0.88rem; line-height: 1.5; margin: 0;">
-                Self-register as a patient to screen for potential health risks and get AI-powered predictions, or login as a clinic admin to manage records.
-            </p>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 1.5rem;">🏥</span>
+            <h2 style="color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.3px;">
+                Clinical Decision Portal
+            </h2>
         </div>
+        <p style="color: #64748b; font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
+            Self-register as a patient to screen for potential health risks and get AI-powered predictions, or login as a clinic admin to manage records.
+        </p>
         """, unsafe_allow_html=True)
 
         auth_tab_login, auth_tab_reg = st.tabs(["🔑 Sign In", "📝 Self-Registration (Sign Up)"])
@@ -467,51 +515,6 @@ if st.session_state.authenticated_user is None:
                             st.rerun()
                         else:
                             st.error(f"⚠️ {res['error']}")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Bottom Overview metric badges on Welcome Page
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Physiological Systems</div>
-            <div class="metric-value">4 Modules</div>
-            <div class="metric-desc">Neuro, Cardio, Metabolic, Renal</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with c2:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Hardware Dependence</div>
-            <div class="metric-value">0% External</div>
-            <div class="metric-desc">Pure software algorithms & standard labs</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with c3:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Cloud Database</div>
-            <div class="metric-value">Permanent</div>
-            <div class="metric-desc">MongoDB Atlas persistent storage</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with c4:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Speech Accessibility</div>
-            <div class="metric-value">13 Languages</div>
-            <div class="metric-desc">Full native voice synthesis</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("""
-    <div style="text-align: center; color: #64748b; font-size: 0.85rem;">
-        Intelligent Healthcare Monitoring and Early Disease Prediction System • Semester 5 Design Project<br>
-        Built with Python, Streamlit, Scikit-Learn, and Librosa • 100% Software-Based Clinical Decision Support
-    </div>
-    """, unsafe_allow_html=True)
 
     st.stop()
 
