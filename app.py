@@ -473,13 +473,16 @@ if st.session_state.authenticated_user is None:
                     l_pass = st.text_input("Password", type="password", placeholder="••••••••")
                     btn_login = st.form_submit_button("🚀 Log In to Dashboard", type="primary", use_container_width=True)
                     if btn_login:
-                        res = db_manager.authenticate_user(l_email, l_pass)
-                        if res["success"]:
-                            st.session_state.authenticated_user = res["user"]
-                            st.success(f"Welcome back, {res['user']['name']}!")
-                            st.rerun()
+                        if not str(l_email).strip() or not str(l_pass).strip():
+                            st.error("⚠️ Please enter your User ID / Email and password.")
                         else:
-                            st.error(f"⚠️ {res['error']}")
+                            res = db_manager.authenticate_user(l_email, l_pass)
+                            if res["success"]:
+                                st.session_state.authenticated_user = res["user"]
+                                st.success(f"Welcome back, {res['user']['name']}!")
+                                st.rerun()
+                            else:
+                                st.error(f"⚠️ {res['error']}")
 
                 st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 16px 0 8px;'>— OR QUICK-TEST WITH ONE CLICK —</p>", unsafe_allow_html=True)
                 if st.button("👑 Admin Login", use_container_width=True):
@@ -487,6 +490,8 @@ if st.session_state.authenticated_user is None:
                     if res["success"]:
                         st.session_state.authenticated_user = res["user"]
                         st.rerun()
+                    else:
+                        st.error(f"⚠️ {res.get('error', 'Admin login failed')}")
 
             with auth_tab_reg:
                 with st.form("portal_register_form"):
