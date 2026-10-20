@@ -445,6 +445,8 @@ def get_screening_records(user_id: str = None):
         col = mongo_db["screenings"]
         query = {"user_id": user_id} if user_id else {}
         records = list(col.find(query, {"_id": 0}).sort("timestamp", -1))
+        if not records and "screening_records" in mongo_db.list_collection_names():
+            records = list(mongo_db["screening_records"].find(query, {"_id": 0}).sort("timestamp", -1))
         return records
     else:
         conn = get_sqlite_conn()

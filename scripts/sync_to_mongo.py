@@ -52,6 +52,7 @@ def sync_data():
                     col.update_one({"user_id": row["user_id"]}, {"$set": row}, upsert=True)
                 elif table == "screening_records":
                     col.update_one({"user_id": row["user_id"], "timestamp": row["timestamp"], "disease": row["disease"]}, {"$set": row}, upsert=True)
+                    mongo_db["screenings"].update_one({"user_id": row["user_id"], "timestamp": row["timestamp"], "disease": row["disease"]}, {"$set": row}, upsert=True)
                 elif table == "clinical_uploads":
                     col.update_one({"user_id": row["user_id"], "timestamp": row["timestamp"], "file_name": row.get("file_name")}, {"$set": row}, upsert=True)
                 elif table == "patient_complaints":
