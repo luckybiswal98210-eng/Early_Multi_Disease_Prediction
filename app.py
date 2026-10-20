@@ -395,19 +395,22 @@ if st.session_state.authenticated_user is None:
         }
         .block-container {
             max-width: 1400px !important;
-            padding-top: 1.5rem !important;
+            padding-top: 2.2rem !important;
             padding-bottom: 2rem !important;
             padding-left: 2rem !important;
             padding-right: 2rem !important;
         }
-        /* Make column 2 the single cohesive white card */
-        [data-testid="column"]:nth-of-type(2) {
+        /* Top margin gap for the portal column from the header */
+        [data-testid="stColumn"]:nth-of-type(2) {
+            padding-top: 24px !important;
+        }
+        /* Single cohesive white card wrapping header, form, tabs, and buttons */
+        [data-testid="stColumn"]:nth-of-type(2) [data-testid="stVerticalBlockBorderWrapper"] {
             background: #ffffff !important;
             border-radius: 24px !important;
-            padding: 28px 26px 22px !important;
-            box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.04) !important;
-            border: 1px solid rgba(226, 232, 240, 0.8) !important;
-            margin-top: 6px !important;
+            padding: 28px 26px 24px !important;
+            box-shadow: 0 18px 45px -10px rgba(15, 23, 42, 0.09), 0 0 1px 1px rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(226, 232, 240, 0.85) !important;
         }
         [data-testid="stForm"] {
             background: transparent !important;
@@ -439,7 +442,7 @@ if st.session_state.authenticated_user is None:
     </style>
     """, unsafe_allow_html=True)
 
-    # 2-Column Hero: Left = Wide Medical Graphic (Title + Anatomy), Right = Single Clinical Decision Portal Card
+    # 2-Column Hero: Left = Wide HD Medical Graphic (Title + Anatomy), Right = Single Clinical Decision Portal Card
     w_col_img, w_col_info = st.columns([1.75, 1], gap="small")
 
     with w_col_img:
@@ -449,72 +452,67 @@ if st.session_state.authenticated_user is None:
             render_image(banner_img_path)
 
     with w_col_info:
-        st.markdown("""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <span style="font-size: 1.5rem;">🏥</span>
-            <h2 style="color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.3px;">
-                Clinical Decision Portal
-            </h2>
-        </div>
-        <p style="color: #64748b; font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
-            Self-register as a patient to screen for potential health risks and get AI-powered predictions, or login as a clinic admin to manage records.
-        </p>
-        """, unsafe_allow_html=True)
-
-        auth_tab_login, auth_tab_reg = st.tabs(["🔑 Sign In", "📝 Self-Registration (Sign Up)"])
-
-        with auth_tab_login:
-            with st.form("portal_login_form"):
-                l_email = st.text_input("User ID or Email Address", placeholder="name@example.com or 98210000")
-                l_pass = st.text_input("Password", type="password", placeholder="••••••••")
-                btn_login = st.form_submit_button("🚀 Log In to Dashboard", type="primary", use_container_width=True)
-                if btn_login:
-                    res = db_manager.authenticate_user(l_email, l_pass)
-                    if res["success"]:
-                        st.session_state.authenticated_user = res["user"]
-                        st.success(f"Welcome back, {res['user']['name']}!")
-                        st.rerun()
-                    else:
-                        st.error(f"⚠️ {res['error']}")
-
-            st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 12px 0 6px;'>— ONE-CLICK CLINIC ADMIN ACCESS —</p>", unsafe_allow_html=True)
-            if st.button("👑 Admin Portal (ID: 98210000)", use_container_width=True):
-                res = db_manager.authenticate_user("98210000", "@lucky7575")
-                if res["success"]:
-                    st.session_state.authenticated_user = res["user"]
-                    st.rerun()
+        with st.container(border=True):
             st.markdown("""
-            <div style="text-align: center; font-size: 0.78rem; color: #64748b; margin-top: 4px;">
-                Admin ID: <code style="color: #0284c7; font-weight: 600;">98210000</code> &nbsp;|&nbsp; 
-                Password: <code style="color: #0284c7; font-weight: 600;">@lucky7575</code>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="font-size: 1.5rem;">🏥</span>
+                <h2 style="color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.3px;">
+                    Clinical Decision Portal
+                </h2>
             </div>
+            <p style="color: #64748b; font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
+                Self-register as a patient to screen for potential health risks and get AI-powered predictions, or login as a clinic admin to manage records.
+            </p>
             """, unsafe_allow_html=True)
 
-        with auth_tab_reg:
-            with st.form("portal_register_form"):
-                r_name = st.text_input("Full Patient Name *", placeholder="e.g. Ramesh Sharma")
-                r_email = st.text_input("Email Address *", placeholder="name@example.com")
-                r_pass = st.text_input("Create Password *", type="password", placeholder="Minimum 6 characters")
-                r_c1, r_c2 = st.columns(2)
-                with r_c1:
-                    r_age = st.number_input("Age", min_value=1, max_value=120, value=40)
-                with r_c2:
-                    r_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-                r_contact = st.text_input("Contact Number (Optional)", placeholder="+91 98765 00000")
+            auth_tab_login, auth_tab_reg = st.tabs(["🔑 Sign In", "📝 Sign Up"])
 
-                btn_reg = st.form_submit_button("✅ Register Free Account", type="primary", use_container_width=True)
-                if btn_reg:
-                    if not r_name.strip() or not r_email.strip() or not r_pass.strip():
-                        st.error("⚠️ Full name, email, and password are required.")
-                    else:
-                        role = "admin" if "admin" in r_email.lower() else "patient"
-                        res = db_manager.register_user(r_name, r_email, r_pass, r_age, r_gender, r_contact, role)
+            with auth_tab_login:
+                with st.form("portal_login_form"):
+                    l_email = st.text_input("User ID or Email Address", placeholder="name@example.com or 98210000")
+                    l_pass = st.text_input("Password", type="password", placeholder="••••••••")
+                    btn_login = st.form_submit_button("🚀 Log In to Dashboard", type="primary", use_container_width=True)
+                    if btn_login:
+                        res = db_manager.authenticate_user(l_email, l_pass)
                         if res["success"]:
                             st.session_state.authenticated_user = res["user"]
-                            st.success(f"Registered {r_name} successfully!")
+                            st.success(f"Welcome back, {res['user']['name']}!")
                             st.rerun()
                         else:
                             st.error(f"⚠️ {res['error']}")
+
+                st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 16px 0 8px;'>— OR QUICK-TEST WITH ONE CLICK —</p>", unsafe_allow_html=True)
+                if st.button("👑 Admin Login", use_container_width=True):
+                    res = db_manager.authenticate_user("98210000", "@lucky7575")
+                    if res["success"]:
+                        st.session_state.authenticated_user = res["user"]
+                        st.rerun()
+
+            with auth_tab_reg:
+                with st.form("portal_register_form"):
+                    r_name = st.text_input("Full Patient Name *", placeholder="e.g. Ramesh Sharma")
+                    r_email = st.text_input("Email Address *", placeholder="name@example.com")
+                    r_pass = st.text_input("Create Password *", type="password", placeholder="Minimum 6 characters")
+                    r_c1, r_c2 = st.columns(2)
+                    with r_c1:
+                        r_age = st.number_input("Age", min_value=1, max_value=120, value=40)
+                    with r_c2:
+                        r_gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+                    r_contact = st.text_input("Contact Number (Optional)", placeholder="+91 98765 00000")
+
+                    btn_reg = st.form_submit_button("✅ Register Free Account", type="primary", use_container_width=True)
+                    if btn_reg:
+                        if not r_name.strip() or not r_email.strip() or not r_pass.strip():
+                            st.error("⚠️ Full name, email, and password are required.")
+                        else:
+                            role = "admin" if "admin" in r_email.lower() else "patient"
+                            res = db_manager.register_user(r_name, r_email, r_pass, r_age, r_gender, r_contact, role)
+                            if res["success"]:
+                                st.session_state.authenticated_user = res["user"]
+                                st.success(f"Registered {r_name} successfully!")
+                                st.rerun()
+                            else:
+                                st.error(f"⚠️ {res['error']}")
 
     st.stop()
 
