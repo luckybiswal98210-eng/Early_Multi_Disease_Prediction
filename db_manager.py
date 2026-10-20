@@ -64,33 +64,33 @@ def init_db():
         # Ensure unique index on email
         users_col.create_index("email", unique=True)
         
-        # Seed default admin if not exists
-        if not users_col.find_one({"email": "admin@health.org"}):
+        # Remove demo patient if exists
+        users_col.delete_many({"email": "patient@health.org"})
+        users_col.delete_many({"user_id": "USR-1001"})
+        
+        # Seed/Update default master admin (ID: 98210000, Pass: @lucky7575)
+        admin_user = users_col.find_one({"$or": [{"user_id": "98210000"}, {"email": "98210000"}]})
+        if not admin_user:
             users_col.insert_one({
-                "user_id": "USR-ADMIN-1",
-                "name": "Clinic Administrator",
-                "email": "admin@health.org",
-                "password_hash": hash_password("admin123"),
+                "user_id": "98210000",
+                "name": "System Administrator",
+                "email": "98210000",
+                "password_hash": hash_password("@lucky7575"),
                 "role": "admin",
-                "age": 45,
+                "age": 40,
                 "gender": "Other",
-                "contact": "+91 98765 00000",
+                "contact": "+91 98210 00000",
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             })
-            
-        # Seed demo patient if not exists
-        if not users_col.find_one({"email": "patient@health.org"}):
-            users_col.insert_one({
-                "user_id": "USR-1001",
-                "name": "Demo Patient",
-                "email": "patient@health.org",
-                "password_hash": hash_password("patient123"),
-                "role": "patient",
-                "age": 42,
-                "gender": "Male",
-                "contact": "+91 98765 43210",
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            })
+        else:
+            # Ensure password and role are up to date
+            users_col.update_one(
+                {"_id": admin_user["_id"]},
+                {"$set": {
+                    "password_hash": hash_password("@lucky7575"),
+                    "role": "admin"
+                }}
+            )
     else:
         conn = get_sqlite_conn()
         cur = conn.cursor()
@@ -138,29 +138,23 @@ def init_db():
         )
         """)
         
-        # Seed default admin
-        cur.execute("SELECT email FROM users WHERE email = 'admin@health.org'")
-        if not cur.fetchone():
+        # Remove demo patient if exists in SQLite
+        cur.execute("DELETE FROM users WHERE email = 'patient@health.org' OR user_id = 'USR-1001'")
+        
+        # Seed/Update default master admin (ID: 98210000, Pass: @lucky7575)
+        cur.execute("SELECT * FROM users WHERE user_id = '98210000' OR email = '98210000'")
+        row = cur.fetchone()
+        if not row:
             cur.execute("""
             INSERT INTO users (user_id, name, email, password_hash, role, age, gender, contact, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                "USR-ADMIN-1", "Clinic Administrator", "admin@health.org",
-                hash_password("admin123"), "admin", 45, "Other", "+91 98765 00000",
+                "98210000", "System Administrator", "98210000",
+                hash_password("@lucky7575"), "admin", 40, "Other", "+91 98210 00000",
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             ))
-
-        # Seed demo patient
-        cur.execute("SELECT email FROM users WHERE email = 'patient@health.org'")
-        if not cur.fetchone():
-            cur.execute("""
-            INSERT INTO users (user_id, name, email, password_hash, role, age, gender, contact, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                "USR-1001", "Demo Patient", "patient@health.org",
-                hash_password("patient123"), "patient", 42, "Male", "+91 98765 43210",
-                datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            ))
+        else:
+            cur.execute("UPDATE users SET password_hash = ?, role = 'admin' WHERE user_id = '98210000' OR email = '98210000'", (hash_password("@lucky7575"),))
             
         conn.commit()
         conn.close()
@@ -232,15 +226,22 @@ def register_user(name: str, email: str, password: str, age: int = 35, gender: s
             }
         }
 
-# User Authentication (Login)
-def authenticate_user(email: str, password: str):
-    email_clean = email.strip().lower()
+# User Authentication (Login by User ID or Email)
+def authenticate_user(identifier: str, password: str):
+    ident_clean = str(identifier).strip()
+    ident_lower = ident_clean.lower()
     
     if USE_MONGO:
         col = mongo_db["users"]
-        user = col.find_one({"email": email_clean})
+        user = col.find_one({
+            "$or": [
+                {"user_id": ident_clean},
+                {"email": ident_lower},
+                {"email": ident_clean}
+            ]
+        })
         if not user or not verify_password(password, user["password_hash"]):
-            return {"success": False, "error": "Invalid email or password."}
+            return {"success": False, "error": "Invalid User ID/Email or password."}
         
         return {
             "success": True,
@@ -256,12 +257,12 @@ def authenticate_user(email: str, password: str):
     else:
         conn = get_sqlite_conn()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email = ?", (email_clean,))
+        cur.execute("SELECT * FROM users WHERE user_id = ? OR email = ? OR email = ?", (ident_clean, ident_lower, ident_clean))
         row = cur.fetchone()
         conn.close()
         
         if not row or not verify_password(password, row["password_hash"]):
-            return {"success": False, "error": "Invalid email or password."}
+            return {"success": False, "error": "Invalid User ID/Email or password."}
         
         return {
             "success": True,

@@ -164,12 +164,37 @@ st.markdown("""
     }
 
     .welcome-card {
-        background: linear-gradient(135deg, #0b132b 0%, #1c2541 60%, #1e293b 100%);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 16px;
-        padding: 26px 30px;
-        color: #f8fafc;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 18px !important;
+        padding: 22px 24px !important;
+        color: #0f172a !important;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06) !important;
+    }
+
+    [data-testid="stForm"] {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        padding: 20px 22px !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04) !important;
+    }
+
+    .stTextInput input {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        color: #0f172a !important;
+    }
+
+    .stFormSubmitButton button {
+        background: linear-gradient(135deg, #ff4b4b 0%, #ef4444 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        padding: 10px 20px !important;
+        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
     }
 
     .stButton>button {
@@ -355,49 +380,35 @@ if "screening_results" not in st.session_state:
     }
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-title_banner_path = os.path.join(base_dir, "assets", "title_banner.png")
+welcome_hero_path = os.path.join(base_dir, "assets", "welcome_hero_illustration.png")
 banner_img_path = os.path.join(base_dir, "assets", "healthcare_banner.png")
 
 # -------------------------------------------------------------
 # GATEKEEPER: LANDING HERO & USER SELF-REGISTRATION / LOGIN
 # -------------------------------------------------------------
 if st.session_state.authenticated_user is None:
-    # 1. Background Title Banner Card (First Image given by user)
-    if os.path.exists(title_banner_path):
-        render_image(title_banner_path)
-    else:
-        st.markdown("""
-        <div class="main-header" style="text-align: center;">
-            <h1>🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System</h1>
-            <div class="badge-bar" style="justify-content: center;">
-                <span class="badge-chip">🎙️ Parkinson's Voice Screening</span>
-                <span class="badge-chip">❤️ Cardiovascular Risk Predictor</span>
-                <span class="badge-chip">🩸 Diabetes Mellitus Diagnostic</span>
-                <span class="badge-chip">🫘 Chronic Kidney Disease Panel</span>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # 2. Hero Layout with Anatomy Graphic (Second Image given by user) + Auth Portal
-    w_col_img, w_col_info = st.columns([1.2, 1])
+    # 2-Column Hero: Left = Unified Medical Graphic (Title + Anatomy), Right = Clinical Decision Portal
+    w_col_img, w_col_info = st.columns([1.35, 1], gap="medium")
 
     with w_col_img:
-        if os.path.exists(banner_img_path):
-            render_image(
-                banner_img_path, 
-                caption="Multi-System Physiological Diagnostic Network (Heart • Vocal Cord / Neuro • Kidney • Pancreas / Diabetes)"
-            )
+        if os.path.exists(welcome_hero_path):
+            render_image(welcome_hero_path)
+        elif os.path.exists(banner_img_path):
+            render_image(banner_img_path)
 
     with w_col_info:
         st.markdown("""
-        <div class="welcome-card" style="margin-bottom: 16px;">
-            <h2 style="color: #38bdf8; margin-top: 0; font-size: 1.45rem; font-weight: 700;">
-                🏥 Clinical Decision Portal
-            </h2>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin-bottom: 0;">
-                Self-register as a patient to screen 4 chronic diseases and track your personal health records, or log in as Clinic Admin.
+        <div class="welcome-card" style="margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="font-size: 1.4rem;">🏥</span>
+                <h2 style="color: #0f172a; margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.3px;">
+                    Clinical Decision Portal
+                </h2>
+            </div>
+            <p style="color: #64748b; font-size: 0.88rem; line-height: 1.5; margin: 0;">
+                Self-register as a patient to screen for potential health risks and get AI-powered predictions, or login as a clinic admin to manage records.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -406,7 +417,7 @@ if st.session_state.authenticated_user is None:
 
         with auth_tab_login:
             with st.form("portal_login_form"):
-                l_email = st.text_input("Email Address", placeholder="name@example.com")
+                l_email = st.text_input("User ID or Email Address", placeholder="name@example.com or 98210000")
                 l_pass = st.text_input("Password", type="password", placeholder="••••••••")
                 btn_login = st.form_submit_button("🚀 Log In to Dashboard", type="primary", use_container_width=True)
                 if btn_login:
@@ -418,20 +429,18 @@ if st.session_state.authenticated_user is None:
                     else:
                         st.error(f"⚠️ {res['error']}")
 
-            st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 8px 0;'>— OR QUICK-TEST WITH ONE CLICK —</p>", unsafe_allow_html=True)
-            col_d1, col_d2 = st.columns(2)
-            with col_d1:
-                if st.button("👤 Demo Patient", use_container_width=True):
-                    res = db_manager.authenticate_user("patient@health.org", "patient123")
-                    if res["success"]:
-                        st.session_state.authenticated_user = res["user"]
-                        st.rerun()
-            with col_d2:
-                if st.button("👑 Admin Portal", use_container_width=True):
-                    res = db_manager.authenticate_user("admin@health.org", "admin123")
-                    if res["success"]:
-                        st.session_state.authenticated_user = res["user"]
-                        st.rerun()
+            st.markdown("<p style='text-align: center; color: #64748b; font-size: 0.8rem; margin: 12px 0 6px;'>— ONE-CLICK CLINIC ADMIN ACCESS —</p>", unsafe_allow_html=True)
+            if st.button("👑 Admin Portal (ID: 98210000)", use_container_width=True):
+                res = db_manager.authenticate_user("98210000", "@lucky7575")
+                if res["success"]:
+                    st.session_state.authenticated_user = res["user"]
+                    st.rerun()
+            st.markdown("""
+            <div style="text-align: center; font-size: 0.78rem; color: #64748b; margin-top: 4px;">
+                Admin ID: <code style="color: #0284c7; font-weight: 600;">98210000</code> &nbsp;|&nbsp; 
+                Password: <code style="color: #0284c7; font-weight: 600;">@lucky7575</code>
+            </div>
+            """, unsafe_allow_html=True)
 
         with auth_tab_reg:
             with st.form("portal_register_form"):
