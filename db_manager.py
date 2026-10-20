@@ -1,6 +1,8 @@
 import os
 import sqlite3
 import hashlib
+import io
+import base64
 from datetime import datetime
 import pandas as pd
 
@@ -119,6 +121,20 @@ def init_db():
             status TEXT NOT NULL,
             vitals TEXT,
             notes TEXT
+        )
+        """)
+        
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS clinical_uploads (
+            upload_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            user_name TEXT NOT NULL,
+            user_email TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            upload_type TEXT NOT NULL,
+            file_name TEXT,
+            image_b64 TEXT,
+            findings TEXT
         )
         """)
         
@@ -318,6 +334,134 @@ def get_all_users():
         users = [dict(r) for r in cur.fetchall()]
         conn.close()
         return users
+
+# Helper: Convert PIL Image to small base64 string for cloud storage
+def pil_to_base64(pil_img, max_size=(350, 350)):
+    try:
+        img_copy = pil_img.copy()
+        img_copy.thumbnail(max_size)
+        buffer = io.BytesIO()
+        if img_copy.mode != "RGB":
+            img_copy = img_copy.convert("RGB")
+        img_copy.save(buffer, format="JPEG", quality=75)
+        return base64.b64encode(buffer.getvalue()).decode('utf-8')
+    except Exception:
+        return ""
+
+# Save Clinical Upload (Prescription or Symptom Photo)
+def save_clinical_upload(user_id: str, user_name: str, user_email: str, upload_type: str, file_name: str, image_b64: str = "", findings: str = ""):
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if USE_MONGO:
+        col = mongo_db["clinical_uploads"]
+        col.insert_one({
+            "user_id": user_id,
+            "user_name": user_name,
+            "user_email": user_email,
+            "timestamp": now_str,
+            "upload_type": upload_type,
+            "file_name": file_name,
+            "image_b64": image_b64,
+            "findings": findings
+        })
+    else:
+        conn = get_sqlite_conn()
+        cur = conn.cursor()
+        cur.execute("""
+        INSERT INTO clinical_uploads (user_id, user_name, user_email, timestamp, upload_type, file_name, image_b64, findings)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, user_name, user_email, now_str, upload_type, file_name, image_b64, findings))
+        conn.commit()
+        conn.close()
+
+# Get Clinical Uploads (For Admin Portal & Patient Review)
+def get_clinical_uploads(user_id: str = None):
+    if USE_MONGO:
+        col = mongo_db["clinical_uploads"]
+        query = {"user_id": user_id} if user_id else {}
+        uploads = list(col.find(query, {"_id": 0}).sort("timestamp", -1))
+        return uploads
+    else:
+        conn = get_sqlite_conn()
+        cur = conn.cursor()
+        if user_id:
+            cur.execute("SELECT * FROM clinical_uploads WHERE user_id = ? ORDER BY upload_id DESC", (user_id,))
+        else:
+            cur.execute("SELECT * FROM clinical_uploads ORDER BY upload_id DESC")
+        rows = [dict(r) for r in cur.fetchall()]
+        conn.close()
+        return rows
+
+# Admin: Reset / Change any user's password
+def admin_update_password(user_id: str, new_password: str):
+    if not new_password or len(new_password.strip()) < 4:
+        return {"success": False, "error": "New password must be at least 4 characters."}
+    new_hash = hash_password(new_password.strip())
+    if USE_MONGO:
+        col = mongo_db["users"]
+        res = col.update_one({"user_id": user_id}, {"$set": {"password_hash": new_hash}})
+        if res.matched_count > 0:
+            return {"success": True, "message": f"Password for {user_id} successfully updated."}
+        return {"success": False, "error": "User ID not found in database."}
+    else:
+        conn = get_sqlite_conn()
+        cur = conn.cursor()
+        cur.execute("UPDATE users SET password_hash = ? WHERE user_id = ?", (new_hash, user_id))
+        conn.commit()
+        updated = cur.rowcount > 0
+        conn.close()
+        if updated:
+            return {"success": True, "message": f"Password for {user_id} successfully updated."}
+        return {"success": False, "error": "User ID not found in database."}
+
+# Admin: Update User Profile / Role
+def admin_update_user(user_id: str, name: str, email: str, role: str, age: int, gender: str, contact: str = ""):
+    if USE_MONGO:
+        col = mongo_db["users"]
+        res = col.update_one({"user_id": user_id}, {"$set": {
+            "name": name.strip(),
+            "email": email.strip().lower(),
+            "role": role,
+            "age": int(age),
+            "gender": gender,
+            "contact": contact.strip()
+        }})
+        if res.matched_count > 0:
+            return {"success": True, "message": f"User {user_id} updated successfully."}
+        return {"success": False, "error": "User ID not found."}
+    else:
+        conn = get_sqlite_conn()
+        cur = conn.cursor()
+        cur.execute("""
+        UPDATE users SET name = ?, email = ?, role = ?, age = ?, gender = ?, contact = ?
+        WHERE user_id = ?
+        """, (name.strip(), email.strip().lower(), role, int(age), gender, contact.strip(), user_id))
+        conn.commit()
+        updated = cur.rowcount > 0
+        conn.close()
+        if updated:
+            return {"success": True, "message": f"User {user_id} updated successfully."}
+        return {"success": False, "error": "User ID not found."}
+
+# Admin: Delete a User Account
+def admin_delete_user(user_id: str):
+    if user_id == "USR-ADMIN-1":
+        return {"success": False, "error": "Cannot delete the primary master administrator account."}
+    if USE_MONGO:
+        col = mongo_db["users"]
+        res = col.delete_one({"user_id": user_id})
+        if res.deleted_count > 0:
+            return {"success": True, "message": f"User {user_id} deleted."}
+        return {"success": False, "error": "User ID not found."}
+    else:
+        conn = get_sqlite_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+        conn.commit()
+        deleted = cur.rowcount > 0
+        conn.close()
+        if deleted:
+            return {"success": True, "message": f"User {user_id} deleted."}
+        return {"success": False, "error": "User ID not found."}
 
 def get_database_status():
     return "MongoDB Atlas Cloud Active" if USE_MONGO else "Local SQLite Persistent Mode"

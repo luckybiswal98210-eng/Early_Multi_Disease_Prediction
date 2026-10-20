@@ -8,6 +8,8 @@ import librosa
 from gtts import gTTS
 import matplotlib.pyplot as plt
 from PIL import Image
+import io
+import base64
 import clinical_vision
 import db_manager
 
@@ -901,6 +903,22 @@ Thank you for describing your symptoms: *"{user_input}"*.
                     analysis = clinical_vision.parse_and_understand_prescription(presc_text_input)
 
                     if analysis["status"] == "success":
+                        # Auto-save prescription document to database for Admin oversight
+                        try:
+                            rx_b64 = db_manager.pil_to_base64(presc_img)
+                            rx_summary = f"{analysis['disease_name']} ({analysis['confidence']}% match). Meds: {', '.join(analysis.get('matched_drugs', []))}"
+                            db_manager.save_clinical_upload(
+                                user_id=curr_user["user_id"],
+                                user_name=curr_user["name"],
+                                user_email=curr_user["email"],
+                                upload_type="Doctor Prescription",
+                                file_name=presc_filename,
+                                image_b64=rx_b64,
+                                findings=rx_summary
+                            )
+                        except Exception:
+                            pass
+
                         st.markdown(f"""
                         <div class="result-box-healthy">
                             <h3 style="color: #064e3b !important; margin-top:0;">🎯 Identified Condition: {analysis['icon']} {analysis['disease_name']}</h3>
@@ -1056,6 +1074,21 @@ Thank you for describing your symptoms: *"{user_input}"*.
                     <p style="color: #78350f !important;"><b>Next Step:</b> Proceed to the <b>{next_mod}</b> module in the left sidebar to run the full machine learning risk assessment!</p>
                 </div>
                 """, unsafe_allow_html=True)
+
+                # Auto-save clinical image analysis to database for Admin inspection
+                try:
+                    photo_b64 = db_manager.pil_to_base64(target_pil_img)
+                    db_manager.save_clinical_upload(
+                        user_id=curr_user["user_id"],
+                        user_name=curr_user["name"],
+                        user_email=curr_user["email"],
+                        upload_type="Clinical Symptom Photo",
+                        file_name=img_source_label,
+                        image_b64=photo_b64,
+                        findings=f"{suspected_disease} ({final_confidence}% confidence). {findings}"
+                    )
+                except Exception:
+                    pass
 
             else:
                 st.info("👈 Please upload an image or choose one of the pre-loaded clinical samples to begin visual disease identification.")
@@ -1623,9 +1656,11 @@ elif menu_selection == "👑 Master Admin Portal & All Records" and curr_user["r
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    adm_tab1, adm_tab2 = st.tabs([
-        "📜 Master Screening Logs (All Patients)",
-        "👥 Registered Users Directory"
+    adm_tab1, adm_tab2, adm_tab3, adm_tab4 = st.tabs([
+        "📜 Master Screening Logs",
+        "👥 Registered Users Directory",
+        "🛠️ User & Password Management",
+        "🖼️ Uploaded Prescriptions & Photos"
     ])
 
     with adm_tab1:
@@ -1658,17 +1693,116 @@ elif menu_selection == "👑 Master Admin Portal & All Records" and curr_user["r
 
     with adm_tab2:
         st.markdown("#### 👥 Registered Patient & Admin Accounts")
-        df_users = pd.DataFrame(all_users)[["user_id", "name", "email", "role", "age", "gender", "contact", "created_at"]].rename(columns={
-            "user_id": "User ID",
-            "name": "Full Name",
-            "email": "Email Address",
-            "role": "Role",
-            "age": "Age",
-            "gender": "Gender",
-            "contact": "Contact",
-            "created_at": "Joined On"
-        })
-        st.dataframe(df_users, use_container_width=True, hide_index=True)
+        if all_users:
+            df_users = pd.DataFrame(all_users)[["user_id", "name", "email", "role", "age", "gender", "contact", "created_at"]].rename(columns={
+                "user_id": "User ID",
+                "name": "Full Name",
+                "email": "Email Address",
+                "role": "Role",
+                "age": "Age",
+                "gender": "Gender",
+                "contact": "Contact",
+                "created_at": "Joined On"
+            })
+            st.dataframe(df_users, use_container_width=True, hide_index=True)
+        else:
+            st.info("No user accounts found.")
+
+    with adm_tab3:
+        st.markdown("#### 🛠️ Administrator Account & Password Management")
+        st.caption("Change any user's password, modify account credentials/roles, or delete accounts.")
+
+        if all_users:
+            user_options = {f"{u['name']} ({u['email']}) - [{u['role'].upper()}] - {u['user_id']}": u for u in all_users}
+            selected_user_label = st.selectbox("Select User Account to Modify:", list(user_options.keys()), key="adm_user_select")
+            target_user = user_options[selected_user_label]
+
+            u_col1, u_col2 = st.columns(2)
+
+            with u_col1:
+                st.markdown(f"##### 🔑 Reset Password for: `{target_user['email']}`")
+                new_user_pwd = st.text_input(
+                    "Enter New Password:",
+                    type="password",
+                    placeholder="Min 4 characters",
+                    key="adm_pwd_input"
+                )
+                if st.button("🔄 Update / Reset Password", key="adm_pwd_btn", type="primary"):
+                    res = db_manager.admin_update_password(target_user["user_id"], new_user_pwd)
+                    if res["success"]:
+                        st.success(f"✅ {res['message']}")
+                    else:
+                        st.error(f"❌ {res['error']}")
+
+            with u_col2:
+                st.markdown("##### ✏️ Update Profile & Permissions")
+                edit_name = st.text_input("Full Name:", value=target_user["name"], key="adm_edit_name")
+                edit_email = st.text_input("Email:", value=target_user["email"], key="adm_edit_email")
+                role_idx = 0 if target_user["role"] == "patient" else 1
+                edit_role = st.selectbox("Role Permission:", ["patient", "admin"], index=role_idx, key="adm_edit_role")
+                edit_age = st.number_input("Age:", min_value=1, max_value=120, value=int(target_user.get("age") or 35), key="adm_edit_age")
+                gender_opts = ["Male", "Female", "Other"]
+                g_val = target_user.get("gender", "Male")
+                g_idx = gender_opts.index(g_val) if g_val in gender_opts else 0
+                edit_gender = st.selectbox("Gender:", gender_opts, index=g_idx, key="adm_edit_gender")
+                edit_contact = st.text_input("Phone Contact:", value=str(target_user.get("contact") or ""), key="adm_edit_contact")
+
+                if st.button("💾 Save User Modifications", key="adm_save_profile"):
+                    res = db_manager.admin_update_user(
+                        user_id=target_user["user_id"],
+                        name=edit_name,
+                        email=edit_email,
+                        role=edit_role,
+                        age=edit_age,
+                        gender=edit_gender,
+                        contact=edit_contact
+                    )
+                    if res["success"]:
+                        st.success("✅ Account updated successfully!")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {res['error']}")
+
+            st.markdown("---")
+            st.markdown("##### ⚠️ Danger Zone: Delete User Account")
+            confirm_del = st.checkbox(f"I confirm permanent deletion of user {target_user['name']} ({target_user['email']})", key="adm_del_confirm")
+            if st.button("🗑️ Permanently Delete Account", key="adm_del_btn", disabled=not confirm_del):
+                del_res = db_manager.admin_delete_user(target_user["user_id"])
+                if del_res["success"]:
+                    st.success("✅ Account successfully deleted.")
+                    st.rerun()
+                else:
+                    st.error(f"❌ {del_res['error']}")
+
+    with adm_tab4:
+        st.markdown("#### 🖼️ Uploaded Patient Prescriptions & Clinical Photos")
+        st.caption("Visual inspection of all prescriptions and clinical symptom photos submitted by patients.")
+
+        all_uploads = db_manager.get_clinical_uploads()
+        if all_uploads:
+            st.markdown(f"**Total Uploaded Documents & Clinical Images:** `{len(all_uploads)}`")
+            for idx, up in enumerate(all_uploads):
+                with st.expander(f"📁 {up.get('upload_type', 'Upload')} by {up.get('user_name', 'Patient')} ({up.get('user_email', '')}) — {up.get('timestamp', '')}", expanded=(idx == 0)):
+                    p_col1, p_col2 = st.columns([1, 2])
+                    with p_col1:
+                        if up.get("image_b64"):
+                            try:
+                                img_bytes = base64.b64decode(up["image_b64"])
+                                preview_img = Image.open(io.BytesIO(img_bytes))
+                                render_image(preview_img, caption=up.get("file_name", "Uploaded Image"))
+                            except Exception:
+                                st.warning("Image preview unavailable")
+                        else:
+                            st.info("No thumbnail stored.")
+                    with p_col2:
+                        st.markdown(f"**Document Name:** `{up.get('file_name', 'N/A')}`")
+                        st.markdown(f"**Patient ID:** `{up.get('user_id', 'N/A')}`")
+                        st.markdown(f"**Uploaded On:** `{up.get('timestamp', 'N/A')}`")
+                        st.markdown(f"**Upload Type:** `{up.get('upload_type', 'N/A')}`")
+                        st.markdown("**Diagnostic Findings Summary:**")
+                        st.info(up.get("findings", "No notes recorded."))
+        else:
+            st.info("No prescription documents or clinical symptom photos have been uploaded by patients yet.")
 
 # -------------------------------------------------------------
 # GLOBAL FOOTER
