@@ -1,3 +1,15 @@
+---
+title: Early Multi Disease Prediction CDSS
+emoji: 🩺
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+sdk_version: 1.37.1
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # 🩺 Intelligent Healthcare Monitoring & Early Disease Prediction System
 **Semester 5 Engineering Design Project**
 
