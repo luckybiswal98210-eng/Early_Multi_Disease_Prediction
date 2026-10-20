@@ -167,7 +167,7 @@ export default function Home() {
     setAuthLoading(true);
     setAuthError('');
     const demoData = role === 'admin'
-      ? { email: 'admin@health.org', password: 'admin123' }
+      ? { email: '98210000', password: '@lucky7575' }
       : { email: 'patient@health.org', password: 'patient123' };
 
     try {
