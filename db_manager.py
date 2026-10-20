@@ -105,6 +105,22 @@ def init_db():
             findings TEXT
         )
         """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS patient_complaints (
+            complaint_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            user_name TEXT NOT NULL,
+            user_email TEXT NOT NULL,
+            contact TEXT,
+            timestamp TEXT NOT NULL,
+            category TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            description TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Open / Pending Review',
+            admin_notes TEXT DEFAULT ''
+        )
+        """)
         
         # Remove demo patient if exists in SQLite
         cur.execute("DELETE FROM users WHERE email = 'patient@health.org' OR user_id = 'USR-1001'")
@@ -124,6 +140,86 @@ def init_db():
             ))
         else:
             cur.execute("UPDATE users SET password_hash = ?, role = 'admin' WHERE user_id = '98210000' OR email = '98210000'", (admin_hash,))
+
+        # Seed sample registered patients if only admin exists
+        cur.execute("SELECT COUNT(*) FROM users WHERE role != 'admin'")
+        patient_count = cur.fetchone()[0]
+        if patient_count == 0:
+            sample_patients = [
+                ("USR-1002", "Ramesh Sharma", "ramesh.sharma@gmail.com", hash_password("patient123"), "patient", 58, "Male", "+91 98765 12345", "2026-10-18 10:30:00"),
+                ("USR-1003", "Priya Verma", "priya.verma@outlook.com", hash_password("patient123"), "patient", 46, "Female", "+91 98111 22334", "2026-10-18 14:15:00"),
+                ("USR-1004", "Rajesh Kumar", "rajesh.k@gmail.com", hash_password("patient123"), "patient", 52, "Male", "+91 97222 33445", "2026-10-19 09:40:00"),
+                ("USR-1005", "Sunita Patel", "sunita.p@gmail.com", hash_password("patient123"), "patient", 61, "Female", "+91 96333 44556", "2026-10-19 16:20:00"),
+            ]
+            for p in sample_patients:
+                cur.execute("""
+                INSERT OR IGNORE INTO users (user_id, name, email, password_hash, role, age, gender, contact, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, p)
+
+        # Seed realistic patient complaints if empty
+        cur.execute("SELECT COUNT(*) FROM patient_complaints")
+        complaints_count = cur.fetchone()[0]
+        if complaints_count == 0:
+            sample_complaints = [
+                ("USR-1002", "Ramesh Sharma", "ramesh.sharma@gmail.com", "+91 98765 12345", "2026-10-20 14:30:00", "Acoustic / Vocal Tremor Progression", "🔴 Critical / Urgent", "Noticeable vocal quavering and involuntary resting hand tremor worsening over past 3 weeks. Voice screening model predicted 84% probability. Requesting neurologist consultation.", "Open / Pending Review", ""),
+                ("USR-1003", "Priya Verma", "priya.verma@outlook.com", "+91 98111 22334", "2026-10-20 09:15:00", "Severe Glycemic Spike / Diabetes", "🔴 Critical / Urgent", "Fasting blood sugar measured 248 mg/dL on digital glucometer this morning. Experiencing excessive thirst, blurred vision, and persistent fatigue. Need medication adjustment.", "In Progress / Contacted", "Contacted patient. Advised immediate HbA1c lab test and clinical consultation."),
+                ("USR-1004", "Rajesh Kumar", "rajesh.k@gmail.com", "+91 97222 33445", "2026-10-19 18:45:00", "Cardiovascular Chest Tightness", "🟡 Moderate Risk", "Substernal chest tightness and shortness of breath when walking up 2 flights of stairs. Uploaded lead II ECG strip for clinical verification.", "Open / Pending Review", ""),
+                ("USR-1005", "Sunita Patel", "sunita.p@gmail.com", "+91 96333 44556", "2026-10-18 11:20:00", "Renal Filtration / Serum Creatinine Query", "🟢 Mild / Routine", "Serum creatinine test showed 1.4 mg/dL with microalbuminuria. Seeking dietary guidance on low-potassium renal preservation diet.", "Resolved / Guidance Provided", "Sent renal nutrition chart and scheduled 3-month follow-up serum creatinine test.")
+            ]
+            for c in sample_complaints:
+                cur.execute("""
+                INSERT INTO patient_complaints (user_id, user_name, user_email, contact, timestamp, category, severity, description, status, admin_notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, c)
+
+        # Seed sample clinical uploads with base64 images if empty
+        cur.execute("SELECT COUNT(*) FROM clinical_uploads")
+        uploads_count = cur.fetchone()[0]
+        if uploads_count == 0:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            samples_dir = os.path.join(base_dir, "datasets", "image_samples")
+            
+            def get_b64(fname):
+                fpath = os.path.join(samples_dir, fname)
+                if os.path.exists(fpath):
+                    with open(fpath, "rb") as f:
+                        return base64.b64encode(f.read()).decode("utf-8")
+                return ""
+
+            ecg_b64 = get_b64("ecg_heart_sample.png")
+            gl_b64 = get_b64("glucometer_diabetes_sample.png")
+            rx_b64 = get_b64("prescription_heart.png")
+            spiral_b64 = get_b64("spiral_parkinsons_sample.png")
+
+            sample_uploads = [
+                ("USR-1004", "Rajesh Kumar", "rajesh.k@gmail.com", "2026-10-19 18:50:00", "ECG Waveform Strip", "ecg_lead_ii_trace.png", ecg_b64, "ST-segment depression detected in Leads V4-V6. Suggests exercise-induced myocardial ischemia. Recommended for stress echocardiogram."),
+                ("USR-1003", "Priya Verma", "priya.verma@outlook.com", "2026-10-20 09:20:00", "Glucometer Digital Display", "morning_fasting_glucometer.png", gl_b64, "Digital LCD reading: 248 mg/dL (Postprandial Hyperglycemia). Category: High alert metabolic flag."),
+                ("USR-1004", "Rajesh Kumar", "rajesh.k@gmail.com", "2026-10-19 18:55:00", "Doctor Prescription Scan", "cardiology_prescription.png", rx_b64, "Prescribed: Telmisartan 40mg, Atorvastatin 20mg, Aspirin 75mg. Indication: Coronary artery prophylaxis."),
+                ("USR-1002", "Ramesh Sharma", "ramesh.sharma@gmail.com", "2026-10-20 14:35:00", "Handwriting Tremor Spiral Test", "archimedean_spiral_test.png", spiral_b64, "Visible micro-oscillations and line jaggedness on spiral contour. Motor biomarker matching early Parkinsonian tremor.")
+            ]
+            for u in sample_uploads:
+                cur.execute("""
+                INSERT INTO clinical_uploads (user_id, user_name, user_email, timestamp, upload_type, file_name, image_b64, findings)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, u)
+
+        # Seed sample screening records if empty
+        cur.execute("SELECT COUNT(*) FROM screening_records")
+        recs_count = cur.fetchone()[0]
+        if recs_count == 0:
+            sample_recs = [
+                ("USR-1002", "Ramesh Sharma", "ramesh.sharma@gmail.com", "2026-10-20 14:28:00", "Parkinson's Disease", 84.2, "Elevated Risk Detected", "MFCC-1: -182.4, ZCR: 0.082, Tremor Score: 4/5", "Severe voice tremor detected during sustained /a/ phonation."),
+                ("USR-1003", "Priya Verma", "priya.verma@outlook.com", "2026-10-20 09:12:00", "Diabetes Mellitus", 79.5, "Elevated Risk Detected", "Glucose: 248 mg/dL, BMI: 31.2, Blood Pressure: 138/88", "Metabolic syndrome parameters above clinical threshold."),
+                ("USR-1004", "Rajesh Kumar", "rajesh.k@gmail.com", "2026-10-19 18:40:00", "Cardiovascular Disease", 72.8, "Elevated Risk Detected", "BP: 154/96 mm Hg, Chol: 268 mg/dL, Max HR: 122 bpm, Angina: Yes", "Oldpeak ST depression 2.2 mm with exercise angina."),
+                ("USR-1005", "Sunita Patel", "sunita.p@gmail.com", "2026-10-18 11:15:00", "Chronic Kidney Disease", 62.4, "Moderate Risk / Observation Advised", "Serum Creatinine: 1.4 mg/dL, Blood Urea: 44 mg/dL, Albumin: 1+", "Microalbuminuria with borderline GFR filtration."),
+                ("USR-1002", "Ramesh Sharma", "ramesh.sharma@gmail.com", "2026-10-17 16:10:00", "Diabetes Mellitus", 18.5, "Normal / Low Risk", "Glucose: 94 mg/dL, BMI: 24.1, Blood Pressure: 118/76", "Fasting glucose and BMI within healthy normal range.")
+            ]
+            for r in sample_recs:
+                cur.execute("""
+                INSERT INTO screening_records (user_id, user_name, user_email, timestamp, disease, probability, status, vitals, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, r)
             
         conn.commit()
         conn.close()
@@ -497,6 +593,74 @@ def admin_delete_user(user_id: str):
         if deleted:
             return {"success": True, "message": f"User {user_id} deleted."}
         return {"success": False, "error": "User ID not found."}
+
+# Save Patient Complaint / Triage Issue
+def save_patient_complaint(user_id: str, user_name: str, user_email: str, category: str, severity: str, description: str, contact: str = "", status: str = "Open / Pending Review", admin_notes: str = ""):
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if USE_MONGO and mongo_db is not None:
+        try:
+            col = mongo_db["patient_complaints"]
+            col.insert_one({
+                "user_id": user_id,
+                "user_name": user_name,
+                "user_email": user_email,
+                "contact": contact,
+                "timestamp": now_str,
+                "category": category,
+                "severity": severity,
+                "description": description,
+                "status": status,
+                "admin_notes": admin_notes
+            })
+            return {"success": True}
+        except Exception as e:
+            print(f"MongoDB complaint save fallback: {e}")
+            
+    conn = get_sqlite_conn()
+    cur = conn.cursor()
+    cur.execute("""
+    INSERT INTO patient_complaints (user_id, user_name, user_email, contact, timestamp, category, severity, description, status, admin_notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, user_name, user_email, contact, now_str, category, severity, description, status, admin_notes))
+    conn.commit()
+    conn.close()
+    return {"success": True}
+
+# Get Patient Complaints (All for Admin, or by user)
+def get_patient_complaints(user_id: str = None):
+    if USE_MONGO and mongo_db is not None:
+        try:
+            col = mongo_db["patient_complaints"]
+            q = {"user_id": user_id} if user_id else {}
+            return list(col.find(q, {"_id": 0}).sort("timestamp", -1))
+        except Exception as e:
+            print(f"MongoDB get complaints fallback: {e}")
+            
+    conn = get_sqlite_conn()
+    cur = conn.cursor()
+    if user_id:
+        cur.execute("SELECT * FROM patient_complaints WHERE user_id = ? ORDER BY complaint_id DESC", (user_id,))
+    else:
+        cur.execute("SELECT * FROM patient_complaints ORDER BY complaint_id DESC")
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+    return rows
+
+# Admin: Update Complaint Status and Clinical Guidance Note
+def update_patient_complaint(complaint_id, status: str, admin_notes: str = ""):
+    if USE_MONGO and mongo_db is not None:
+        try:
+            col = mongo_db["patient_complaints"]
+            col.update_one({"complaint_id": int(complaint_id)}, {"$set": {"status": status, "admin_notes": admin_notes}})
+        except Exception as e:
+            pass
+            
+    conn = get_sqlite_conn()
+    cur = conn.cursor()
+    cur.execute("UPDATE patient_complaints SET status = ?, admin_notes = ? WHERE complaint_id = ?", (status, admin_notes, complaint_id))
+    conn.commit()
+    conn.close()
+    return {"success": True}
 
 def get_database_status():
     return "MongoDB Atlas Cloud Active" if USE_MONGO else "Local SQLite Persistent Mode"
