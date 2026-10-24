@@ -650,157 +650,80 @@ if menu_selection == "🏠 System Overview & Vitals Dashboard":
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="margin-top: 20px; margin-bottom: 16px;">
-        <h2 style="color: #0f172a; font-size: 1.45rem; font-weight: 700; margin: 0; letter-spacing: -0.3px;">
-            🏥 System Architecture & Clinical Telemetry Overview
-        </h2>
-        <p style="color: #64748b; font-size: 0.88rem; margin: 4px 0 0 0;">
-            Real-time multi-organ health intelligence and predictive screening telemetry across four primary physiological domains.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Diseases Covered</div>
-            <div class="metric-value">4 Systems</div>
-            <div class="metric-desc">Neuro, Cardio, Metabolic, Renal</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Hardware Requirement</div>
-            <div class="metric-value">0% External</div>
-            <div class="metric-desc">Web-based pure software CDSS</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Signal & Lab Inputs</div>
-            <div class="metric-value">Multi-Modal</div>
-            <div class="metric-desc">Acoustics, Vitals, Biochemicals</div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col4:
-        st.markdown("""
-        <div class="metric-card">
-            <div class="metric-title">Speech Feedback</div>
-            <div class="metric-value">13+ Langs</div>
-            <div class="metric-desc">Multilingual gTTS Accessibility</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
     # -------------------------------------------------------------
-    # NORMALIZED BALANCED SECTION: ARCHITECTURE & DATASETS
+    # NORMALIZED CLINICAL ARCHITECTURE & VALIDATED BENCHMARK DATASETS
     # -------------------------------------------------------------
     c_left, c_right = st.columns([1, 1], gap="medium")
     
     with c_left:
-        st.markdown("""
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.04); height: 100%;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                <span style="font-size: 1.45rem;">🔬</span>
-                <div>
-                    <h3 style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 700;">How Early Disease Prediction Works Without Hardware</h3>
-                    <span style="color: #64748b; font-size: 0.8rem;">Software-as-a-Medical-Device (SaMD) • Zero External Hospital Equipment</span>
-                </div>
-            </div>
-            <p style="color: #475569; font-size: 0.84rem; line-height: 1.45; margin-bottom: 14px;">
-                Traditional health diagnostics rely on expensive specialized hospital hardware. This system demonstrates accessible, software-driven clinical decision support:
-            </p>
+        with st.container(border=True):
+            st.markdown("### 🔬 How Early Disease Prediction Works Without Hardware")
+            st.caption("Software-as-a-Medical-Device (SaMD) • Zero External Hospital Equipment")
+            st.markdown(
+                "Traditional health diagnostics rely on expensive specialized hospital hardware. "
+                "This platform demonstrates accessible, software-driven clinical decision support:"
+            )
             
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <strong style="color: #0369a1; font-size: 0.88rem;">🎙️ Acoustic Phonetics (Parkinson's):</strong>
-                <p style="color: #334155; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    Neurological degeneration causes subtle vocal fold tremors and dysarthria before severe motor symptoms manifest. Analyzes 20 MFCC frequency bands, zero-crossing rate, and spectral centroids from standard microphones.
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #dc2626; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <strong style="color: #b91c1c; font-size: 0.88rem;">❤️ Vital Sign Corroboration (Heart Disease):</strong>
-                <p style="color: #334155; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    Blood pressure, resting heart rate, and routine ECG waveforms are analyzed via an ensemble classifier to identify ischemic heart disease and arterial narrowing risk.
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <strong style="color: #d97706; font-size: 0.88rem;">🩸 Metabolic Profiling (Diabetes):</strong>
-                <p style="color: #334155; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    Blood sugar, insulin, and body metrics are screened to detect insulin resistance before microvascular damage occurs.
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 12px;">
-                <strong style="color: #047857; font-size: 0.88rem;">🫘 Biochemical Filtration (Kidney Disease):</strong>
-                <p style="color: #334155; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    Serum creatinine, blood urea, and urine albumin levels are evaluated to catch early asymptomatic renal decline.
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            st.info(
+                "**🎙️ Acoustic Phonetics (Parkinson's Disease):**\n\n"
+                "Neurological degeneration causes subtle vocal fold tremors and dysarthria before severe motor symptoms manifest. "
+                "The system analyzes 23 acoustic features (20 MFCC frequency bands, zero-crossing rate, RMS energy, and spectral centroids) "
+                "captured directly via a standard laptop or smartphone microphone."
+            )
+            
+            st.error(
+                "**❤️ Vital Sign Corroboration (Heart Disease):**\n\n"
+                "Routine non-invasive vitals (resting blood pressure, resting heart rate, age, chest pain type, ST depression) "
+                "are analyzed through an ensemble Random Forest model to assess coronary artery disease and myocardial risk."
+            )
+            
+            st.warning(
+                "**🩸 Metabolic Profiling (Diabetes):**\n\n"
+                "Accessible clinical parameters (fasting plasma glucose, body mass index, blood pressure, insulin, age) "
+                "are evaluated to detect insulin resistance and pre-diabetes before microvascular complications emerge."
+            )
+            
+            st.success(
+                "**🫘 Biochemical Filtration (Kidney Disease):**\n\n"
+                "Routine blood and urine test values (serum creatinine, blood urea, albumin, specific gravity, hemoglobin) "
+                "are screened to identify early asymptomatic renal filtration decline."
+            )
 
     with c_right:
-        st.markdown("""
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.04); height: 100%;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                <span style="font-size: 1.45rem;">🌐</span>
-                <div>
-                    <h3 style="margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 700;">Validated Academic Benchmark Datasets</h3>
-                    <span style="color: #64748b; font-size: 0.8rem;">Gold-Standard Clinical Cohorts with Rigorous Ground Truth</span>
-                </div>
-            </div>
-            <p style="color: #475569; font-size: 0.84rem; line-height: 1.45; margin-bottom: 14px;">
-                Machine learning models are trained and validated on validated, peer-reviewed clinical cohorts:
-            </p>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #0369a1; font-size: 0.88rem;">🎙️ Oxford Parkinson's Voice Corpus</strong>
-                    <span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; font-weight: 700;">Audio Samples</span>
-                </div>
-                <p style="color: #475569; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    Sustained vowel /a/ recordings • 23 Acoustic Biomarkers (20 MFCCs, ZCR, RMS, Centroid) • Random Forest
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #dc2626; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #b91c1c; font-size: 0.88rem;">❤️ UCI Cleveland Heart Disease</strong>
-                    <span style="background: #fee2e2; color: #b91c1c; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; font-weight: 700;">303 Patients</span>
-                </div>
-                <p style="color: #475569; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    13 Clinical Biomarkers • Random Forest (83.61% Accuracy, 0.916 ROC-AUC) • ST-Depression & Hemodynamics
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #d97706; font-size: 0.88rem;">🩸 NIDDK Pima Indians Diabetes</strong>
-                    <span style="background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; font-weight: 700;">768 Patients</span>
-                </div>
-                <p style="color: #475569; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    8 Metabolic Predictors • Random Forest (73.38% Accuracy, 0.808 ROC-AUC) • Clinical Zero-Imputation
-                </p>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #047857; font-size: 0.88rem;">🫘 UCI Apollo Hospitals Chennai CKD</strong>
-                    <span style="background: #d1fae5; color: #047857; padding: 2px 8px; border-radius: 12px; font-size: 0.74rem; font-weight: 700;">400 Patients</span>
-                </div>
-                <p style="color: #475569; font-size: 0.81rem; margin: 3px 0 0 0; line-height: 1.4;">
-                    11 Renal Filtration Markers • Random Forest (98.75% 5-Fold Cross Validation) • Serum Creatinine & Urea
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.markdown("### 🌐 Validated Academic Benchmark Datasets")
+            st.caption("Gold-Standard Clinical Cohorts with Rigorous Ground Truth")
+            st.markdown(
+                "Machine learning models are trained and validated on peer-reviewed, gold-standard clinical cohorts:"
+            )
+            
+            st.info(
+                "**🎙️ Oxford Parkinson's Voice Corpus (Audio Samples)**\n\n"
+                "• **Cohort:** Sustained vowel /a/ phonations from Parkinson's & healthy subjects\n\n"
+                "• **Biomarkers:** 23 Acoustic features (20 MFCCs, ZCR, RMS, Centroid)\n\n"
+                "• **Model:** Random Forest Classifier with standard audio preprocessing"
+            )
+            
+            st.error(
+                "**❤️ UCI Cleveland Heart Disease (303 Patients)**\n\n"
+                "• **Cohort:** 303 patient clinical records from Cleveland Clinic Foundation\n\n"
+                "• **Performance:** 83.61% Accuracy, 0.916 ROC-AUC\n\n"
+                "• **Biomarkers:** 13 parameters including ST-depression and hemodynamics"
+            )
+            
+            st.warning(
+                "**🩸 NIDDK Pima Indians Diabetes (768 Patients)**\n\n"
+                "• **Cohort:** 768 female patients of Pima Indian heritage (NIH/NIDDK)\n\n"
+                "• **Performance:** 73.38% Accuracy, 0.808 ROC-AUC\n\n"
+                "• **Biomarkers:** 8 metabolic predictors with clinical zero-imputation"
+            )
+            
+            st.success(
+                "**🫘 UCI Apollo Hospitals Chennai CKD (400 Patients)**\n\n"
+                "• **Cohort:** 400 patient records from Apollo Hospitals, Tamil Nadu\n\n"
+                "• **Performance:** 98.75% 5-Fold Cross Validation Accuracy\n\n"
+                "• **Biomarkers:** 11 renal markers including serum creatinine and blood urea"
+            )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("---")
