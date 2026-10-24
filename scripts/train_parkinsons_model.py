@@ -92,6 +92,9 @@ print("\nClassification report:")
 print(classification_report(y_test, y_pred, target_names=["Healthy", "Parkinson"]))
 
 # ---------- SAVE MODEL ----------
+os.makedirs("models", exist_ok=True)
 joblib.dump(model, "audio_parkinsons_model.pkl")
 joblib.dump(scaler, "audio_scaler.pkl")
-print("\nSaved audio_parkinsons_model.pkl and audio_scaler.pkl")
+joblib.dump(model, os.path.join("models", "audio_parkinsons_model.pkl"))
+joblib.dump(scaler, os.path.join("models", "audio_scaler.pkl"))
+print("\nSaved audio_parkinsons_model.pkl and audio_scaler.pkl to root and models/ folder")
